@@ -1,0 +1,3801 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index,follow" />
+<title>CosFusion | Gemini 风格美化版</title>
+    <meta
+      name="description"
+      content="CosFusion 以 AI 智能妆造为核心，串联垂直电商、OMO 线下服务与国风内容表达，打造面向二次元场景的一站式妆造平台。"
+    />
+    <style>
+      :root {
+        --bg: #060606;
+        --bg-soft: #101010;
+        --panel: rgba(255, 255, 255, 0.06);
+        --panel-strong: rgba(255, 255, 255, 0.1);
+        --text: #f6f2eb;
+        --muted: rgba(246, 242, 235, 0.72);
+        --line: rgba(255, 255, 255, 0.12);
+        --accent: #f0dfc2;
+        --accent-soft: rgba(240, 223, 194, 0.16);
+        --danger: #f6c1c1;
+        --success: #d8f1d3;
+        --shadow: 0 30px 80px rgba(0, 0, 0, 0.42);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(240, 223, 194, 0.1), transparent 24%),
+          radial-gradient(circle at right 10%, rgba(255, 255, 255, 0.08), transparent 20%),
+          linear-gradient(180deg, #050505 0%, #0d0d0d 100%);
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      img {
+        max-width: 100%;
+        display: block;
+      }
+
+      .page-shell {
+        position: relative;
+        overflow: hidden;
+        min-height: 100vh;
+      }
+
+      .orb {
+        position: absolute;
+        border-radius: 999px;
+        filter: blur(90px);
+        pointer-events: none;
+      }
+
+      .orb--one {
+        top: -8rem;
+        left: 12%;
+        width: 20rem;
+        height: 20rem;
+        background: rgba(240, 223, 194, 0.12);
+      }
+
+      .orb--two {
+        top: 32rem;
+        right: -7rem;
+        width: 22rem;
+        height: 22rem;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+        width: min(1180px, calc(100vw - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 28px 0 20px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand__mark {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.04);
+        letter-spacing: 0.18em;
+        font-size: 12px;
+      }
+
+      .brand strong,
+      .brand span,
+      .nav a,
+      .eyebrow,
+      .pill,
+      .mini-label {
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+      }
+
+      .brand strong {
+        display: block;
+        font-size: 15px;
+      }
+
+      .brand span {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+      }
+
+      .nav a {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+        gap: 28px;
+        padding: 36px 0 70px;
+      }
+
+      .glass {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        backdrop-filter: blur(18px);
+        box-shadow: var(--shadow);
+      }
+
+      .hero__copy,
+      .hero__side,
+      .section-card,
+      .module-card,
+      .market-card,
+      .target-card,
+      .tech-card,
+      .business-card,
+      .timeline-card,
+      .risk-card,
+      .progress-card,
+      .cta {
+        border-radius: 30px;
+      }
+
+      .hero__copy {
+        padding: 42px;
+      }
+
+      .hero__side {
+        padding: 24px;
+      }
+
+      .eyebrow,
+      .mini-label {
+        display: inline-block;
+        margin-bottom: 18px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+      }
+
+      h1,
+      h2 {
+        font-family: Georgia, "Times New Roman", serif;
+        line-height: 1.08;
+      }
+
+      h1 {
+        max-width: 10.5ch;
+        font-size: clamp(44px, 6vw, 88px);
+      }
+
+      h2 {
+        font-size: clamp(32px, 4vw, 56px);
+      }
+
+      h3 {
+        font-size: 22px;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.75;
+      }
+
+      .hero__copy p {
+        max-width: 60ch;
+        margin-top: 22px;
+        font-size: 16px;
+      }
+
+      .hero__actions,
+      .cta__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 30px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 170px;
+        padding: 14px 22px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        transition: transform 180ms ease, background 180ms ease, border 180ms ease;
+      }
+
+      .button:hover {
+        transform: translateY(-2px);
+      }
+
+      .button--primary {
+        background: var(--accent);
+        border-color: rgba(240, 223, 194, 0.8);
+        color: #111;
+      }
+
+      .hero__stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 32px;
+      }
+
+      .metric {
+        padding: 18px;
+        border-radius: 24px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .metric strong {
+        display: block;
+        font-size: clamp(24px, 3vw, 34px);
+        font-family: Georgia, "Times New Roman", serif;
+      }
+
+      .metric span {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .side-stack {
+        display: grid;
+        gap: 16px;
+      }
+
+      .panel {
+        padding: 22px;
+        border-radius: 24px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .panel ul,
+      .module-card ul,
+      .tech-card ul,
+      .business-card ul,
+      .risk-card ul {
+        margin: 14px 0 0;
+        padding-left: 18px;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .pill {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.05);
+        font-size: 10px;
+      }
+
+      main {
+        padding-bottom: 80px;
+      }
+
+      section {
+        margin-top: 28px;
+      }
+
+      .section-card {
+        padding: 34px;
+      }
+
+      .section-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+      }
+
+      .section-heading p {
+        max-width: 54ch;
+      }
+
+      .problem-grid,
+      .module-grid,
+      .market-grid,
+      .target-grid,
+      .tech-grid,
+      .business-grid,
+      .risk-grid,
+      .progress-grid {
+        display: grid;
+        gap: 18px;
+      }
+
+      .problem-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .module-grid,
+      .business-grid,
+      .progress-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .market-grid,
+      .target-grid,
+      .tech-grid,
+      .risk-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .faceflow-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .problem-item,
+      .module-card,
+      .market-card,
+      .target-card,
+      .tech-card,
+      .faceflow-card,
+      .business-card,
+      .timeline-card,
+      .risk-card,
+      .progress-card {
+        padding: 24px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .problem-item strong,
+      .progress-card strong,
+      .timeline-card strong {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
+
+      .problem-item--alert {
+        background: linear-gradient(180deg, rgba(246, 193, 193, 0.08), rgba(255, 255, 255, 0.04));
+      }
+
+      .problem-item--accent {
+        background: linear-gradient(180deg, rgba(240, 223, 194, 0.12), rgba(255, 255, 255, 0.04));
+      }
+
+      .card-index {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        margin-bottom: 18px;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.18em;
+      }
+
+      .module-card p,
+      .market-card p,
+      .target-card p,
+      .tech-card p,
+      .faceflow-card p,
+      .business-card p,
+      .risk-card p,
+      .timeline-card p,
+      .progress-card p {
+        margin-top: 12px;
+      }
+
+      .faceflow-card {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .faceflow-card::after {
+        content: "";
+        position: absolute;
+        inset: auto 24px 0;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(240, 223, 194, 0.45), transparent);
+      }
+
+      .faceflow-card__step {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 88px;
+        height: 34px;
+        margin-bottom: 18px;
+        padding: 0 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--accent-soft);
+        color: var(--text);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .section-note {
+        margin-top: 20px;
+        padding: 18px 20px;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--muted);
+        line-height: 1.75;
+      }
+
+      .demo-grid {
+        display: grid;
+        gap: 18px;
+      }
+
+      .demo-shell,
+      .demo-controls,
+      .model-shell {
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .demo-stage {
+        position: relative;
+        overflow: hidden;
+        border-radius: 24px;
+        aspect-ratio: 4 / 5;
+        background:
+          radial-gradient(circle at top, rgba(240, 223, 194, 0.22), transparent 35%),
+          linear-gradient(180deg, #171717 0%, #0f0f0f 100%);
+        border: 1px solid var(--line);
+      }
+
+      .demo-canvas,
+      .demo-video,
+      .demo-image {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .demo-stage__badge {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        z-index: 2;
+        padding: 9px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(0, 0, 0, 0.46);
+        color: var(--text);
+        font-size: 12px;
+        backdrop-filter: blur(12px);
+      }
+
+      .demo-stage__hint {
+        position: absolute;
+        inset: auto 16px 16px;
+        z-index: 2;
+        padding: 14px 16px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: rgba(0, 0, 0, 0.42);
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.65;
+      }
+
+      .compare-stage {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .compare-pane {
+        position: relative;
+        overflow: hidden;
+        border-radius: 24px;
+        aspect-ratio: 4 / 5;
+        border: 1px solid var(--line);
+        background:
+          radial-gradient(circle at top, rgba(240, 223, 194, 0.14), transparent 35%),
+          linear-gradient(180deg, #171717 0%, #0f0f0f 100%);
+      }
+
+      .compare-pane--after {
+        box-shadow: 0 0 0 1px rgba(240, 223, 194, 0.18) inset;
+      }
+
+      .compare-pane__label {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        z-index: 2;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(0, 0, 0, 0.46);
+        font-size: 12px;
+        color: var(--text);
+        backdrop-filter: blur(12px);
+      }
+
+      .demo-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .demo-button,
+      .upload-pill {
+        min-width: 0;
+        width: 100%;
+      }
+
+      .upload-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 22px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        cursor: pointer;
+        transition: transform 180ms ease, background 180ms ease;
+      }
+
+      .upload-pill:hover {
+        transform: translateY(-2px);
+      }
+
+      .upload-pill input {
+        display: none;
+      }
+
+      .demo-tip {
+        margin-top: 14px;
+        font-size: 13px;
+      }
+
+      .preset-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .preset-card {
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--text);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .preset-card.is-active {
+        border-color: rgba(240, 223, 194, 0.8);
+        background: rgba(240, 223, 194, 0.08);
+        box-shadow: 0 0 0 1px rgba(240, 223, 194, 0.18) inset;
+      }
+
+      .preset-card strong,
+      .preset-card span {
+        display: block;
+      }
+
+      .preset-card strong {
+        margin-top: 10px;
+        font-size: 14px;
+      }
+
+      .preset-card span {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      .preset-art {
+        position: relative;
+        overflow: hidden;
+        height: 78px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .preset-art::before,
+      .preset-art::after {
+        content: "";
+        position: absolute;
+      }
+
+      .preset-art::before {
+        inset: 12px 30px 8px;
+        border-radius: 50% 50% 42% 42%;
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      .preset-art::after {
+        left: 24px;
+        right: 24px;
+        top: 9px;
+        height: 28px;
+        border-radius: 18px 18px 8px 8px;
+        background: rgba(0, 0, 0, 0.28);
+      }
+
+      .preset-art--natural {
+        background:
+          radial-gradient(circle at 50% 24%, rgba(255, 255, 255, 0.35), transparent 32%),
+          linear-gradient(180deg, rgba(196, 169, 255, 0.42), rgba(255, 214, 214, 0.16));
+      }
+
+      .preset-art--glam {
+        background:
+          radial-gradient(circle at 50% 24%, rgba(255, 255, 255, 0.24), transparent 32%),
+          linear-gradient(180deg, rgba(255, 106, 156, 0.52), rgba(136, 72, 255, 0.22));
+      }
+
+      .preset-art--guofeng {
+        background:
+          radial-gradient(circle at 50% 24%, rgba(255, 255, 255, 0.2), transparent 32%),
+          linear-gradient(180deg, rgba(244, 195, 116, 0.5), rgba(214, 83, 83, 0.18));
+      }
+
+      .control-stack {
+        margin-top: 20px;
+      }
+
+      .control-group {
+        display: grid;
+        grid-template-columns: 92px minmax(0, 1fr) 40px;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .control-group + .control-group {
+        margin-top: 12px;
+      }
+
+      .control-group label,
+      .control-group strong {
+        font-size: 13px;
+      }
+
+      .control-group strong {
+        text-align: right;
+        color: var(--text);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .control-group input[type="range"] {
+        width: 100%;
+      }
+
+      .model-shell {
+        margin-top: 18px;
+      }
+
+      .model-viewport {
+        display: grid;
+        place-items: center;
+        min-height: 280px;
+        margin-top: 18px;
+        border-radius: 24px;
+        border: 1px solid var(--line);
+        background:
+          radial-gradient(circle at 50% 20%, rgba(240, 223, 194, 0.22), transparent 30%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.1));
+        perspective: 900px;
+      }
+
+      .model-figure {
+        position: relative;
+        width: 220px;
+        height: 280px;
+        transform-style: preserve-3d;
+        transition: transform 180ms ease;
+      }
+
+      .model-face {
+        --accent-color: #ef8ca4;
+        --accent-soft-color: rgba(239, 140, 164, 0.2);
+        --eye-color: #caa7ff;
+        --jaw-scale: 1;
+        --eye-scale: 1;
+        --blush-pos: 58%;
+        --lip-alpha: 0.7;
+        --glow-strength: 0.52;
+        position: absolute;
+        inset: 20px 34px 0;
+        border-radius: 48% 48% 44% 44% / 42% 42% 50% 50%;
+        background:
+          radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.4), transparent calc(16% + var(--glow-strength) * 18%)),
+          linear-gradient(180deg, #f5dbc8 0%, #ebc9b2 100%);
+        box-shadow: 0 30px 40px rgba(0, 0, 0, 0.22);
+        transform: scaleX(var(--jaw-scale));
+      }
+
+      .model-hair {
+        position: absolute;
+        inset: -8px -10px auto;
+        height: 96px;
+        border-radius: 50% 50% 26% 26%;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.94), rgba(33, 33, 33, 0.86));
+      }
+
+      .model-highlight {
+        position: absolute;
+        left: 50%;
+        top: 26px;
+        width: 60px;
+        height: 18px;
+        border-radius: 999px;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, calc(0.18 + var(--glow-strength) * 0.28));
+        filter: blur(4px);
+      }
+
+      .model-eye,
+      .model-blush {
+        position: absolute;
+      }
+
+      .model-eye {
+        top: 94px;
+        width: 38px;
+        height: 12px;
+        border-radius: 999px;
+        background: var(--eye-color);
+        transform: scaleY(var(--eye-scale));
+        box-shadow: 0 0 16px rgba(202, 167, 255, 0.32);
+      }
+
+      .model-eye--left {
+        left: 40px;
+      }
+
+      .model-eye--right {
+        right: 40px;
+      }
+
+      .model-blush {
+        top: var(--blush-pos);
+        width: 44px;
+        height: 22px;
+        border-radius: 999px;
+        background: var(--accent-soft-color);
+        filter: blur(6px);
+      }
+
+      .model-blush--left {
+        left: 24px;
+      }
+
+      .model-blush--right {
+        right: 24px;
+      }
+
+      .model-nose {
+        position: absolute;
+        left: 50%;
+        top: 108px;
+        width: 4px;
+        height: 38px;
+        border-radius: 999px;
+        transform: translateX(-50%);
+        background: rgba(130, 90, 78, 0.24);
+      }
+
+      .model-lips {
+        position: absolute;
+        left: 50%;
+        bottom: 42px;
+        width: 54px;
+        height: 16px;
+        transform: translateX(-50%);
+        border-radius: 999px;
+        background: rgba(239, 140, 164, var(--lip-alpha));
+        box-shadow: 0 0 16px rgba(239, 140, 164, 0.18);
+      }
+
+      .model-gridline {
+        position: absolute;
+        left: 50%;
+        top: 34px;
+        bottom: 24px;
+        width: 1px;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.18);
+      }
+
+      .model-gridline::before,
+      .model-gridline::after {
+        content: "";
+        position: absolute;
+        left: -54px;
+        width: 108px;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.16);
+      }
+
+      .model-gridline::before {
+        top: 58px;
+      }
+
+      .model-gridline::after {
+        top: 106px;
+      }
+
+      .readout-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .control-panels {
+        display: grid;
+        grid-template-columns: minmax(320px, 0.95fr) minmax(320px, 1.05fr);
+        gap: 18px;
+      }
+
+      .readout {
+        padding: 14px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .readout span,
+      .readout strong {
+        display: block;
+      }
+
+      .readout span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .readout strong {
+        margin-top: 8px;
+        font-size: 14px;
+      }
+
+      .analysis-shell {
+        margin-top: 18px;
+        padding: 24px;
+        border-radius: 28px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .analysis-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .analysis-card {
+        padding: 16px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .analysis-card span,
+      .analysis-card strong,
+      .analysis-card em {
+        display: block;
+        font-style: normal;
+      }
+
+      .analysis-card span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .analysis-card strong {
+        margin-top: 8px;
+        font-size: 16px;
+      }
+
+      .analysis-card em {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .analysis-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .analysis-tag {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(240, 223, 194, 0.06);
+        color: var(--text);
+        font-size: 12px;
+      }
+
+      .reference-shell {
+        margin-top: 18px;
+        padding: 20px;
+        border-radius: 24px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .reference-grid {
+        display: grid;
+        grid-template-columns: 160px minmax(0, 1fr);
+        gap: 16px;
+        margin-top: 16px;
+      }
+
+      .reference-preview {
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        border: 1px solid var(--line);
+        background:
+          radial-gradient(circle at top, rgba(240, 223, 194, 0.16), transparent 35%),
+          linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+        aspect-ratio: 3 / 4;
+      }
+
+      .reference-preview canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .reference-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .reference-item {
+        padding: 12px 14px;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.025);
+      }
+
+      .reference-item span,
+      .reference-item strong {
+        display: block;
+      }
+
+      .reference-item span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .reference-item strong {
+        margin-top: 8px;
+        font-size: 14px;
+      }
+
+      .swatch-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .swatch {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .comparison {
+        overflow: hidden;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 24px;
+        border: 1px solid var(--line);
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        padding: 18px 16px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .comparison-table th {
+        color: var(--text);
+        font-size: 13px;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .comparison-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .timeline-card {
+        position: relative;
+      }
+
+      .timeline-card::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto auto 24px;
+        width: 1px;
+        height: calc(100% - 48px);
+        background: linear-gradient(180deg, rgba(240, 223, 194, 0.5), transparent);
+      }
+
+      .timeline-card .pill {
+        margin-bottom: 18px;
+        background: var(--accent-soft);
+      }
+
+      .cta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 36px;
+        border: 1px solid var(--line);
+        background:
+          linear-gradient(180deg, rgba(240, 223, 194, 0.08), rgba(255, 255, 255, 0.04)),
+          rgba(255, 255, 255, 0.04);
+      }
+
+      .footer-note {
+        margin-top: 22px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      @media (max-width: 980px) {
+        .hero,
+        .timeline,
+        .module-grid,
+        .business-grid,
+        .progress-grid,
+        .faceflow-grid,
+        .market-grid,
+        .target-grid,
+        .tech-grid,
+        .risk-grid,
+        .problem-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section-heading,
+        .cta,
+        .topbar {
+          align-items: start;
+          flex-direction: column;
+        }
+
+        .hero__stats {
+          grid-template-columns: 1fr;
+        }
+
+        .comparison {
+          overflow-x: auto;
+        }
+
+        .comparison-table {
+          min-width: 760px;
+        }
+
+        .preset-grid,
+        .demo-actions,
+        .readout-grid,
+        .analysis-grid,
+        .compare-stage,
+        .reference-grid,
+        .control-panels {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .container {
+          width: min(100vw - 20px, 1180px);
+        }
+
+        .hero__copy,
+        .hero__side,
+        .section-card,
+        .cta {
+          padding: 24px;
+          border-radius: 24px;
+        }
+
+        .button {
+          width: 100%;
+        }
+      }
+
+      /* Gemini-inspired polish layer: minimal dark UI, soft gradients, command-style entry. */
+      body.gemini-inspired {
+        --bg: #0b0f19;
+        --bg-soft: #101522;
+        --panel: rgba(18, 23, 36, 0.72);
+        --panel-strong: rgba(31, 38, 58, 0.78);
+        --text: #f7faff;
+        --muted: rgba(224, 231, 255, 0.68);
+        --line: rgba(164, 180, 255, 0.16);
+        --accent: #d7e2ff;
+        --accent-soft: rgba(125, 156, 255, 0.18);
+        --gemini-blue: #7aa7ff;
+        --gemini-purple: #b284ff;
+        --gemini-pink: #ff92cf;
+        --gemini-green: #7fe7c4;
+        --shadow: 0 28px 90px rgba(0, 0, 0, 0.46);
+        background:
+          radial-gradient(circle at 18% -10%, rgba(122, 167, 255, 0.26), transparent 30%),
+          radial-gradient(circle at 84% 4%, rgba(178, 132, 255, 0.22), transparent 28%),
+          linear-gradient(180deg, #080b12 0%, #0d111c 48%, #090d14 100%);
+      }
+
+      body.gemini-inspired::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        background-image:
+          linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+        background-size: 42px 42px;
+        mask-image: radial-gradient(circle at 50% 0%, black, transparent 68%);
+      }
+
+      .scroll-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 50;
+        width: 0%;
+        height: 3px;
+        background: linear-gradient(90deg, var(--gemini-blue), var(--gemini-purple), var(--gemini-pink));
+        box-shadow: 0 0 24px rgba(122, 167, 255, 0.55);
+      }
+
+      .page-shell {
+        isolation: isolate;
+      }
+
+      .orb--one {
+        background: rgba(122, 167, 255, 0.22);
+      }
+
+      .orb--two {
+        background: rgba(178, 132, 255, 0.18);
+      }
+
+      .topbar {
+        position: sticky;
+        top: 12px;
+        z-index: 20;
+        width: min(1180px, calc(100vw - 32px));
+        margin-top: 10px;
+        padding: 12px 14px;
+        border: 1px solid rgba(164, 180, 255, 0.13);
+        border-radius: 999px;
+        background: rgba(8, 12, 20, 0.72);
+        backdrop-filter: blur(22px) saturate(140%);
+        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
+      }
+
+      .brand__mark {
+        border: 0;
+        background:
+          linear-gradient(#0d1320, #0d1320) padding-box,
+          linear-gradient(135deg, var(--gemini-blue), var(--gemini-purple), var(--gemini-pink)) border-box;
+        border: 1px solid transparent;
+        box-shadow: 0 0 32px rgba(122, 167, 255, 0.26);
+      }
+
+      .nav a {
+        position: relative;
+        padding: 9px 11px;
+        border-radius: 999px;
+        transition: color 180ms ease, background 180ms ease, transform 180ms ease;
+      }
+
+      .nav a:hover,
+      .nav a.is-active {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-1px);
+      }
+
+      .hero {
+        align-items: stretch;
+        padding-top: 64px;
+      }
+
+      .glass,
+      .metric,
+      .panel,
+      .module-card,
+      .market-card,
+      .target-card,
+      .tech-card,
+      .business-card,
+      .timeline-card,
+      .risk-card,
+      .progress-card,
+      .demo-shell,
+      .demo-controls,
+      .analysis-shell {
+        position: relative;
+        overflow: hidden;
+        background:
+          linear-gradient(145deg, rgba(255, 255, 255, 0.095), rgba(255, 255, 255, 0.035)) padding-box,
+          linear-gradient(145deg, rgba(122, 167, 255, 0.32), rgba(178, 132, 255, 0.16), rgba(255, 146, 207, 0.18)) border-box;
+        border: 1px solid transparent;
+      }
+
+      .glass::before,
+      .metric::before,
+      .panel::before,
+      .module-card::before,
+      .market-card::before,
+      .target-card::before,
+      .tech-card::before,
+      .business-card::before,
+      .timeline-card::before,
+      .risk-card::before,
+      .progress-card::before,
+      .demo-shell::before,
+      .demo-controls::before,
+      .analysis-shell::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at var(--mx, 18%) var(--my, 12%), rgba(122, 167, 255, 0.16), transparent 32%);
+        opacity: 0;
+        transition: opacity 220ms ease;
+      }
+
+      .glass:hover::before,
+      .metric:hover::before,
+      .panel:hover::before,
+      .module-card:hover::before,
+      .market-card:hover::before,
+      .target-card:hover::before,
+      .tech-card:hover::before,
+      .business-card:hover::before,
+      .timeline-card:hover::before,
+      .risk-card:hover::before,
+      .progress-card:hover::before,
+      .demo-shell:hover::before,
+      .demo-controls:hover::before,
+      .analysis-shell:hover::before {
+        opacity: 1;
+      }
+
+      h1,
+      h2 {
+        font-family: "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        letter-spacing: -0.055em;
+      }
+
+      h1 {
+        max-width: 12ch;
+        background: linear-gradient(100deg, #ffffff 8%, #dbe7ff 38%, #b99cff 68%, #ff9ed5 98%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      h2 {
+        max-width: 18ch;
+      }
+
+      .eyebrow,
+      .mini-label {
+        color: rgba(199, 212, 255, 0.78);
+      }
+
+      .button,
+      .upload-pill {
+        font-weight: 700;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+      }
+
+      .button--primary {
+        color: #07101f;
+        border-color: transparent;
+        background: linear-gradient(135deg, #f6f9ff, #c8d8ff 42%, #d8c3ff 100%);
+        box-shadow: 0 16px 36px rgba(122, 167, 255, 0.22);
+      }
+
+      .button:hover,
+      .upload-pill:hover,
+      .preset-card:hover {
+        transform: translateY(-3px);
+      }
+
+      .gemini-prompt {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 14px;
+        margin-top: 24px;
+        padding: 14px 14px 14px 16px;
+        border: 1px solid rgba(164, 180, 255, 0.18);
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.075);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 20px 55px rgba(0,0,0,0.2);
+      }
+
+      .gemini-prompt__spark {
+        display: grid;
+        place-items: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--gemini-blue), var(--gemini-purple), var(--gemini-pink));
+        color: white;
+        font-size: 20px;
+      }
+
+      .gemini-prompt span,
+      .gemini-insight span {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .gemini-prompt strong {
+        display: block;
+        margin-top: 4px;
+        overflow: hidden;
+        color: var(--text);
+        font-size: 15px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .gemini-prompt a {
+        padding: 10px 14px;
+        border-radius: 999px;
+        color: #08101e;
+        font-size: 13px;
+        font-weight: 800;
+        background: #f7faff;
+      }
+
+      .metric,
+      .panel,
+      .module-card,
+      .market-card,
+      .target-card,
+      .tech-card,
+      .business-card,
+      .timeline-card,
+      .risk-card,
+      .progress-card,
+      .preset-card,
+      .analysis-card,
+      .readout,
+      .reference-item {
+        transition: transform 220ms ease, border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
+      }
+
+      .metric:hover,
+      .panel:hover,
+      .module-card:hover,
+      .market-card:hover,
+      .target-card:hover,
+      .tech-card:hover,
+      .business-card:hover,
+      .timeline-card:hover,
+      .risk-card:hover,
+      .progress-card:hover,
+      .analysis-card:hover,
+      .readout:hover,
+      .reference-item:hover {
+        border-color: rgba(195, 210, 255, 0.34);
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+        transform: translateY(-4px);
+      }
+
+      .insight-panel {
+        background:
+          radial-gradient(circle at 14% 18%, rgba(127, 231, 196, 0.18), transparent 35%),
+          linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
+      }
+
+      .gemini-insight {
+        display: grid;
+        gap: 12px;
+      }
+
+      .gemini-insight__bar {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 13px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.07);
+      }
+
+      .gemini-insight__bar strong {
+        color: #d8fff0;
+        font-size: 14px;
+      }
+
+      .demo-stage,
+      .compare-pane,
+      .model-viewport,
+      .reference-preview {
+        background:
+          radial-gradient(circle at 50% 0%, rgba(122, 167, 255, 0.16), transparent 35%),
+          linear-gradient(180deg, rgba(15, 22, 35, 0.98), rgba(8, 12, 20, 0.98));
+      }
+
+      input[type="range"] {
+        accent-color: var(--gemini-purple);
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(20px) scale(0.985);
+        transition: opacity 520ms ease, transform 520ms ease;
+      }
+
+      .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+
+      @media (max-width: 980px) {
+        .topbar {
+          position: relative;
+          top: 0;
+          border-radius: 28px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .gemini-prompt {
+          grid-template-columns: auto minmax(0, 1fr);
+        }
+
+        .gemini-prompt a {
+          grid-column: 1 / -1;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body class="gemini-inspired">
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <div class="page-shell">
+      <div class="orb orb--one"></div>
+      <div class="orb orb--two"></div>
+
+      <header class="container topbar">
+        <a class="brand" href="#top">
+          <div class="brand__mark">CF</div>
+          <div>
+            <strong>CosFusion</strong>
+            <span>次元妆造融合平台</span>
+          </div>
+        </a>
+
+        <nav class="nav">
+          <a href="#overview">项目定位</a>
+          <a href="#modules">核心模块</a>
+          <a href="#market">市场机会</a>
+          <a href="#tech">技术方案</a>
+          <a href="#faceflow">人脸交互</a>
+          <a href="#demo">交互原型</a>
+          <a href="#business">商业模式</a>
+          <a href="#roadmap">发展路线</a>
+        </nav>
+      </header>
+
+      <main class="container" id="top">
+        <section class="hero">
+          <div class="hero__copy glass">
+            <span class="eyebrow">AI Tool + Vertical Commerce + OMO Service</span>
+            <h1>让每一次热爱，都能高还原落地成真。</h1>
+            <p>
+              CosFusion 聚焦二次元与新国风妆造场景，以 AI 智能妆造为核心，
+              串联角色解析、动态教程、商品推荐、线下预约与社群反馈，构建一站式次元妆造闭环。
+            </p>
+            <div class="hero__actions">
+              <a class="button button--primary" href="#modules">查看核心模块</a>
+              <a class="button" href="#tech">查看技术方案</a>
+            </div>
+
+            <div class="gemini-prompt" aria-label="AI 妆造体验入口">
+              <div class="gemini-prompt__spark">✦</div>
+              <div>
+                <span>Ask CosFusion</span>
+                <strong id="geminiPromptText">上传角色图，我会生成适合真人脸型的妆造方案</strong>
+              </div>
+              <a href="#demo">开始体验</a>
+            </div>
+            <div class="hero__stats">
+              <div class="metric">
+                <strong>4.9亿</strong>
+                <span>泛二次元用户规模，年轻消费群体已形成稳定增量市场。</span>
+              </div>
+              <div class="metric">
+                <strong>92.3%</strong>
+                <span>计划书中给出的风格还原目标，用于强化高精度角色复现能力。</span>
+              </div>
+              <div class="metric">
+                <strong>≤15秒</strong>
+                <span>单次建模目标时长，支撑“上传即出方案”的产品体验。</span>
+              </div>
+            </div>
+          </div>
+
+          <aside class="hero__side glass">
+            <div class="side-stack">
+              <div class="panel">
+                <span class="mini-label">项目定位</span>
+                <h3>不是内容堆叠，而是完整的一条妆造链路</h3>
+                <p>
+                  面向“高还原需求”和“低操作门槛”之间的矛盾，CosFusion
+                  用 AI、商品与服务网络把“想出角色”真正变成“顺利出成角色”。
+                </p>
+                <div class="pill-row">
+                  <span class="pill">AI 智能妆造</span>
+                  <span class="pill">AR 实时指导</span>
+                  <span class="pill">垂直商城</span>
+                  <span class="pill">OMO 服务</span>
+                  <span class="pill">国风 IP</span>
+                </div>
+              </div>
+
+              <div class="panel insight-panel">
+                <span class="mini-label">Gemini 式交互逻辑</span>
+                <div class="gemini-insight">
+                  <div class="gemini-insight__bar">
+                    <span>入口更像对话框</span>
+                    <strong>先提问，再引导体验</strong>
+                  </div>
+                  <div class="gemini-insight__bar">
+                    <span>页面信息分层</span>
+                    <strong>结论、能力、Demo 分步呈现</strong>
+                  </div>
+                  <div class="gemini-insight__bar">
+                    <span>视觉重心</span>
+                    <strong>暗色背景 + 柔和渐变光晕</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="panel">
+                <span class="mini-label">当前成果</span>
+                <ul>
+                  <li>已形成首页推荐、商品分类、购物车、线下服务、AI 指导、用户中心等原型界面。</li>
+                  <li>已明确“AI 工具 + 垂直电商 + OMO 服务”的一体化产品结构。</li>
+                  <li>已在项目文本中梳理合规、安全、版权与服务治理框架。</li>
+                </ul>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <section class="section-card glass" id="overview">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">项目概览</span>
+              <h2>Cosplay 妆造，不该继续靠高成本和低效率硬撑</h2>
+            </div>
+            <p>
+              计划书与设计文档都指向同一个结论：行业并不缺热爱，缺的是一个能把教程、选品与落地服务真正接起来的平台。
+            </p>
+          </div>
+
+          <div class="problem-grid">
+            <article class="problem-item problem-item--alert">
+              <strong>行业痛点</strong>
+              <p>
+                角色妆造高成本、低还原、教程碎片化、服务分散、价格不透明，用户往往需要跨多个平台完成一次出角准备。
+              </p>
+            </article>
+            <article class="problem-item problem-item--accent">
+              <strong>项目答案</strong>
+              <p>
+                通过多模态角色解析、动态妆教、垂直商城与线下服务整合，形成从“选角色”到“到现场”的一条龙解决方案。
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section-card glass" id="modules">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">核心模块</span>
+              <h2>三大业务板块，共同构成项目的产品闭环</h2>
+            </div>
+            <p>
+              这部分直接对应计划书里的主营业务结构，也更适合首页向评委、合作方和用户清晰传达“我们到底在做什么”。
+            </p>
+          </div>
+
+          <div class="module-grid">
+            <article class="module-card">
+              <span class="card-index">01</span>
+              <h3>AI 智能妆造</h3>
+              <p>
+                用户上传个人照片与目标角色后，系统完成角色特征提取、面部适配、妆容分层解析与动态教程生成。
+              </p>
+              <ul>
+                <li>角色妆容与发型结构拆解</li>
+                <li>东方脸型适配与跨性别妆造转换</li>
+                <li>AR 实时试妆与步骤纠偏</li>
+              </ul>
+            </article>
+
+            <article class="module-card">
+              <span class="card-index">02</span>
+              <h3>垂直妆造商城</h3>
+              <p>
+                不做泛美妆种草，而是围绕角色、肤质、妆效与预算，推荐真正适配 Cosplay 与国风妆造场景的商品组合。
+              </p>
+              <ul>
+                <li>基于妆造参数的个性化推荐</li>
+                <li>彩妆、假发、配饰与联名套组</li>
+                <li>C2M 柔性供应链与价格优化</li>
+              </ul>
+            </article>
+
+            <article class="module-card">
+              <span class="card-index">03</span>
+              <h3>OMO 线下服务</h3>
+              <p>
+                将妆娘、毛娘、服装租赁、道具与漫展快闪服务接入同一入口，让线上方案真正落到线下体验。
+              </p>
+              <ul>
+                <li>按城市、角色、预算与档期匹配服务</li>
+                <li>评价体系、保证金机制与履约保障</li>
+                <li>漫展补妆站与快闪服务拓展</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="section-card glass" id="market">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">市场机会</span>
+              <h2>这是一个被漫展经济、谷子消费与国风审美共同推高的赛道</h2>
+            </div>
+            <p>
+              页面上不必铺满所有研究数据，但要把最关键的市场判断直接立住，让项目可信度先站稳。
+            </p>
+          </div>
+
+          <div class="market-grid">
+            <article class="market-card">
+              <span class="mini-label">用户规模</span>
+              <h3>年轻用户与社交消费正在持续放大需求</h3>
+              <p>
+                文档显示，中国泛二次元用户规模已达 4.9 亿，其中核心用户约 1.2 亿，18-30 岁人群占比高，具备明确的兴趣消费与社交展示需求。
+              </p>
+            </article>
+
+            <article class="market-card">
+              <span class="mini-label">场景爆发</span>
+              <h3>漫展与线下体验活动正在形成持续性流量入口</h3>
+              <p>
+                从大型展会入场人次增长到国风活动联动，线下场景已不只是曝光窗口，更是高频转化和服务复购的重要节点。
+              </p>
+            </article>
+
+            <article class="market-card">
+              <span class="mini-label">消费升级</span>
+              <h3>用户愿意为高还原、强表达、低试错的体验买单</h3>
+              <p>
+                与传统教程式内容不同，用户更愿意为能降低学习成本、直接提升出角完成度的工具和服务付费。
+              </p>
+            </article>
+
+            <article class="market-card">
+              <span class="mini-label">文化叙事</span>
+              <h3>新国风与国产 IP 让项目具备更强辨识度</h3>
+              <p>
+                CosFusion 不只做“二次元美妆工具”，还把国产动漫与传统文化元素纳入妆造表达，形成差异化品牌叙事。
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section-card glass">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">目标用户</span>
+              <h2>从核心漫展用户切入，再向更广的体验型群体扩展</h2>
+            </div>
+            <p>
+              目标市场建议保留“0-2 年 / 2-5 年 / 5 年+”的阶段逻辑，既符合创业计划书，也方便后续对接商业化路线。
+            </p>
+          </div>
+
+          <div class="target-grid">
+            <article class="target-card">
+              <span class="mini-label">0-2 年</span>
+              <h3>高频漫展参与者</h3>
+              <p>
+                18-25 岁核心用户，年均多次参加漫展，对高还原度有明显追求，但常常受限于时间、技巧与预算。
+              </p>
+            </article>
+
+            <article class="target-card">
+              <span class="mini-label">2-5 年</span>
+              <h3>泛二次元体验型用户</h3>
+              <p>
+                参与频率较低，但有明确尝试意愿，更适合通过“新手无忧套餐”“平价套组”和线下体验降低门槛。
+              </p>
+            </article>
+
+            <article class="target-card">
+              <span class="mini-label">5 年+</span>
+              <h3>日常虚拟形象管理用户</h3>
+              <p>
+                随着虚拟社交和数字形象需求增长，可逐步延展到轻量化变妆、日常表达与数字资产联动。
+              </p>
+            </article>
+
+            <article class="target-card">
+              <span class="mini-label">重点场景</span>
+              <h3>漫展、快闪、国风活动、线上社交</h3>
+              <p>
+                平台并非只服务单一展会，而是围绕“出角前准备 + 到场执行 + 内容回流”形成复用路径。
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section-card glass" id="tech">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">技术方案</span>
+              <h2>技术不是概念展示，而是直接服务于还原度、效率与可落地性</h2>
+            </div>
+            <p>
+              首页这里保留“可信、能懂、可扩展”的技术表达：既能体现壁垒，也不会一上来就把页面变成论文摘要。
+            </p>
+          </div>
+
+          <div class="tech-grid">
+            <article class="tech-card">
+              <span class="mini-label">数据底座</span>
+              <h3>联邦学习与多源素材采集</h3>
+              <p>
+                在计划方案中，平台通过面部关键点采集、动漫角色数据集和联邦学习机制，兼顾算法训练效率与隐私保护要求。
+              </p>
+              <ul>
+                <li>东方脸型样本建模</li>
+                <li>角色原画与妆容特征抽取</li>
+                <li>面部数据“可用不可见”</li>
+              </ul>
+            </article>
+
+            <article class="tech-card">
+              <span class="mini-label">解析引擎</span>
+              <h3>StyleGAN3 + UNet++ 跨次元适配</h3>
+              <p>
+                通过分层解析角色的肤色、轮廓、眼妆、纹样与发丝结构，把二维角色特征转化成真人可执行的妆造方案。
+              </p>
+              <ul>
+                <li>妆容基础层与风格层拆解</li>
+                <li>特征权重动态分配</li>
+                <li>降低“面具效应”和失真问题</li>
+              </ul>
+            </article>
+
+            <article class="tech-card">
+              <span class="mini-label">交互体验</span>
+              <h3>动态妆教与 AR 实时纠偏</h3>
+              <p>
+                页面可以突出“上传照片—生成步骤—实时校正”的使用路径，让复杂的技术最终落到明确的用户收益上。
+              </p>
+              <ul>
+                <li>步骤模块化拆解</li>
+                <li>关键参数可视化输出</li>
+                <li>AR 指导响应目标 ≤ 5 秒</li>
+              </ul>
+            </article>
+
+            <article class="tech-card">
+              <span class="mini-label">服务协同</span>
+              <h3>技术结果同步驱动商品与线下服务</h3>
+              <p>
+                妆造结果不是停留在“看起来很厉害”的算法演示，而是继续驱动选品推荐、预约匹配和后续社群反馈。
+              </p>
+              <ul>
+                <li>推荐适配商品型号与色号</li>
+                <li>按预算与城市匹配服务商</li>
+                <li>形成用户反馈闭环</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="section-card glass" id="faceflow">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Face Interaction</span>
+              <h2>把“人脸交互”做成网站里的核心技术主线</h2>
+            </div>
+            <p>
+              下面这部分直接吸收你给出的五步技术逻辑，把采集、解析、识别、适配、动态妆教串成一条完整的人脸交互流程。
+            </p>
+          </div>
+
+          <div class="faceflow-grid">
+            <article class="faceflow-card">
+              <span class="faceflow-card__step">Step 1</span>
+              <h3>数据采集与前期训练</h3>
+              <p>
+                以人脸数据采集和动漫素材收集为起点，构建后续角色解析与个体适配所需的数据底座。
+              </p>
+              <ul>
+                <li>基于 3D 扫描与 MediaPipe 提取 68 个关键点，建立高精度三维面部模型</li>
+                <li>在联邦学习框架下实现“可用不可见”的隐私保护机制</li>
+                <li>引入多民族东方脸型样本，降低偏差并提升算法公平性</li>
+                <li>汇集角色原画与妆容素材，为国风与动漫角色适配提供训练基础</li>
+              </ul>
+            </article>
+
+            <article class="faceflow-card">
+              <span class="faceflow-card__step">Step 2</span>
+              <h3>二次元妆容解析</h3>
+              <p>
+                通过风格预定义和分层解构引擎，把二维角色视觉语言拆成真人可执行的妆造参数。
+              </p>
+              <ul>
+                <li>先区分自然感淡妆与还原感浓妆两类风格矩阵</li>
+                <li>用 StyleGAN3 提取肤色梯度、轮廓线与脸部结构特征</li>
+                <li>用 UNet++ 分离眼妆色阶、纹样密度与局部装饰信息</li>
+                <li>按九型脸标准动态分配权重，减少“面具效应”与平面叠色失真</li>
+              </ul>
+            </article>
+
+            <article class="faceflow-card">
+              <span class="faceflow-card__step">Step 3</span>
+              <h3>客户特征识别</h3>
+              <p>
+                针对用户真实面部结构进行多尺度建模与生理特征解耦，为跨角色适配提供标准化输入。
+              </p>
+              <ul>
+                <li>分离骨骼结构与妆容表现层，支持性别适配转换</li>
+                <li>通过 SHAP 分析优化下颌角、颧骨等关键特征权重</li>
+                <li>结合 3DDFA-V2 输出 12 维面部特征向量与深度图</li>
+                <li>将面部辅助线、角度与距离参数化，为精准妆教做准备</li>
+              </ul>
+            </article>
+
+            <article class="faceflow-card">
+              <span class="faceflow-card__step">Step 4</span>
+              <h3>跨次元妆容适配</h3>
+              <p>
+                让“用户是谁”和“角色长什么样”在同一个融合网络里匹配，输出可实时渲染的妆造结果。
+              </p>
+              <ul>
+                <li>用户特征流提取面部生理特征，角色特征流提取妆容风格特征</li>
+                <li>通过注意力机制动态融合用户脸型与目标角色特征</li>
+                <li>支持多光源环境下的实时渲染与 AR 试妆反馈</li>
+                <li>把用户反馈继续回流模型，形成可持续优化的数据飞轮</li>
+              </ul>
+            </article>
+
+            <article class="faceflow-card">
+              <span class="faceflow-card__step">Step 5</span>
+              <h3>动态妆教生成</h3>
+              <p>
+                在生成最终方案后，系统继续把复杂妆面翻译成分步骤、可视化、可纠错的真人教学流程。
+              </p>
+              <ul>
+                <li>把妆容拆为底妆、眼妆、修容、腮红、唇妆、发饰等模块</li>
+                <li>输出眼线弧度、腮红位置、晕染范围等参数化指标</li>
+                <li>通过摄像头进行实时识别，对越界、偏移和层次错误做纠偏</li>
+                <li>根据脸型与风格偏好自动匹配不同版本的教程难度</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="section-note">
+            建议把这一段作为“拟实现的人脸交互引擎”来展示：如果当前还没有完整训练数据、GPU 集群和授权素材落地，网页文案最好保持“技术路线 / 目标效果 / 规划中的核心能力”表达，避免让外部读者误解为已经全部工程化上线。
+          </div>
+        </section>
+
+        <section class="section-card glass" id="demo">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Interactive Prototype</span>
+              <h2>上传人脸、打开摄像头、调参数，直接预览试妆雏形</h2>
+              <p style="margin-top:12px;"><a class="button button--primary" href="index.html#studio">进入大牌式虚拟试妆工坊</a> <a class="button" href="试妆网站2.html">角色妆容迁移 试妆网站2</a></p>
+            </div>
+            <p>
+              这部分不是完整训练模型，而是一个可交互的前端演示层：用上传图片、实时摄像头、生成式妆效叠加和参数联动模型，把“人脸交互”先做成可见可玩的网页原型。
+            </p>
+          </div>
+
+          <div class="demo-grid">
+            <div class="demo-shell">
+              <div class="demo-stage">
+                <div class="demo-stage__badge" id="demoStatus">等待上传图片或开启摄像头</div>
+                <div class="compare-stage">
+                  <div class="compare-pane">
+                    <span class="compare-pane__label">原图 / Real Face</span>
+                    <canvas id="sourceCanvas" class="demo-canvas" width="960" height="1200"></canvas>
+                  </div>
+                  <div class="compare-pane compare-pane--after">
+                    <span class="compare-pane__label">试妆结果 / Anime Makeup</span>
+                    <canvas id="tryonCanvas" class="demo-canvas" width="960" height="1200"></canvas>
+                  </div>
+                </div>
+                <video id="tryonVideo" class="demo-video" autoplay playsinline muted hidden></video>
+                <img id="tryonImage" class="demo-image" alt="上传的人脸预览" hidden />
+                <div class="demo-stage__hint">
+                  左侧保留原始输入，右侧叠加动漫妆容解析后的高光、眼影范围、脸型引导线与关键点结果，更接近真实产品 Demo 的展示方式。
+                </div>
+              </div>
+
+              <div class="demo-actions">
+                <label class="upload-pill">
+                  上传人脸图片
+                  <input id="faceUpload" type="file" accept="image/*" />
+                </label>
+                <button class="button button--primary demo-button" id="startCameraBtn" type="button">
+                  开启摄像头
+                </button>
+                <button class="button demo-button" id="captureFrameBtn" type="button">
+                  定格当前画面
+                </button>
+                <button class="button demo-button" id="stopCameraBtn" type="button">
+                  关闭摄像头
+                </button>
+              </div>
+
+              <p class="demo-tip">
+                摄像头通常需要在 `http://localhost` 或 `https` 环境下使用；如果你直接双击本地 HTML，上传图片模式会更稳定。
+              </p>
+            </div>
+
+            <div class="control-panels">
+              <div class="demo-controls">
+                <div class="reference-shell">
+                  <span class="mini-label">Anime Reference</span>
+                  <h3>上传动漫角色参考图</h3>
+                  <p>把角色原画、立绘或妆面参考图一起上传，系统会同步提炼角色主色、妆容气质和轮廓方向，再反馈到试妆结果。</p>
+
+                  <div class="demo-actions" style="margin-top:16px;">
+                    <label class="upload-pill">
+                      上传角色参考图
+                      <input id="animeUpload" type="file" accept="image/*" />
+                    </label>
+                  </div>
+
+                  <div class="reference-grid">
+                    <div class="reference-preview">
+                      <canvas id="animeReferenceCanvas" width="720" height="960"></canvas>
+                    </div>
+
+                    <div class="reference-list">
+                      <div class="reference-item">
+                        <span>角色气质</span>
+                        <strong id="animeArchetype">等待角色图</strong>
+                      </div>
+                      <div class="reference-item">
+                        <span>妆面关键词</span>
+                        <strong id="animeKeywords">等待角色图</strong>
+                      </div>
+                      <div class="reference-item">
+                        <span>轮廓方向</span>
+                        <strong id="animeContourTarget">等待角色图</strong>
+                      </div>
+                      <div class="reference-item">
+                        <span>主色板</span>
+                        <strong id="animePaletteText">等待角色图</strong>
+                        <div class="swatch-row">
+                          <span class="swatch" id="swatch1"></span>
+                          <span class="swatch" id="swatch2"></span>
+                          <span class="swatch" id="swatch3"></span>
+                        </div>
+                      </div>
+                      <div class="reference-item">
+                        <span>特殊眼线 / 贴花</span>
+                        <strong id="animeSpecialDetail">等待角色图</strong>
+                      </div>
+                      <div class="reference-item">
+                        <span>假发 / 发饰建议</span>
+                        <strong id="animeAccessorySuggestion">等待角色图</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="demo-controls">
+                <span class="mini-label">Style Presets</span>
+                <h3>风格预设</h3>
+                <p>可直接使用下方预设风格开始试妆；上传动漫角色图后，系统会把角色妆感自动映射到解析面板与预览结果中。</p>
+
+                <div class="preset-grid">
+                  <button class="preset-card is-active" type="button" data-preset="natural">
+                    <div class="preset-art preset-art--natural"></div>
+                    <strong>自然感淡妆</strong>
+                    <span>保留更多原生特征，突出教程感与轻量试妆。</span>
+                  </button>
+
+                  <button class="preset-card" type="button" data-preset="glam">
+                    <div class="preset-art preset-art--glam"></div>
+                    <strong>角色浓妆</strong>
+                    <span>眼妆和唇妆更强烈，适合强化舞台和漫展角色感。</span>
+                  </button>
+
+                  <button class="preset-card" type="button" data-preset="guofeng">
+                    <div class="preset-art preset-art--guofeng"></div>
+                    <strong>新国风妆造</strong>
+                    <span>暖金与绛红更明显，强调东方妆面层次与轮廓。</span>
+                  </button>
+                </div>
+
+                <div class="control-stack">
+                  <div class="control-group">
+                    <label for="jawRange">下颌柔化</label>
+                    <input id="jawRange" type="range" min="0" max="100" value="55" />
+                    <strong id="jawRangeValue">55</strong>
+                  </div>
+
+                  <div class="control-group">
+                    <label for="eyeRange">眼妆强度</label>
+                    <input id="eyeRange" type="range" min="0" max="100" value="62" />
+                    <strong id="eyeRangeValue">62</strong>
+                  </div>
+
+                  <div class="control-group">
+                    <label for="blushRange">腮红位置</label>
+                    <input id="blushRange" type="range" min="0" max="100" value="50" />
+                    <strong id="blushRangeValue">50</strong>
+                  </div>
+
+                  <div class="control-group">
+                    <label for="lipRange">唇妆饱和</label>
+                    <input id="lipRange" type="range" min="0" max="100" value="58" />
+                    <strong id="lipRangeValue">58</strong>
+                  </div>
+
+                  <div class="control-group">
+                    <label for="glowRange">高光亮度</label>
+                    <input id="glowRange" type="range" min="0" max="100" value="54" />
+                    <strong id="glowRangeValue">54</strong>
+                  </div>
+
+                  <div class="control-group">
+                    <label for="asianFitRange">亚洲适配权重</label>
+                    <input id="asianFitRange" type="range" min="0" max="100" value="72" />
+                    <strong id="asianFitRangeValue">72</strong>
+                  </div>
+                </div>
+
+                <div class="readout-grid">
+                  <div class="readout">
+                    <span>当前风格</span>
+                    <strong id="readoutStyle">自然感淡妆</strong>
+                  </div>
+                  <div class="readout">
+                    <span>推荐场景</span>
+                    <strong id="readoutScene">日常漫展 / 新手试妆</strong>
+                  </div>
+                  <div class="readout">
+                    <span>妆教模式</span>
+                    <strong id="readoutGuide">低门槛引导线</strong>
+                  </div>
+                  <div class="readout">
+                    <span>角色表达</span>
+                    <strong id="readoutMood">柔和、通透、易上手</strong>
+                  </div>
+                  <div class="readout">
+                    <span>适配策略</span>
+                    <strong id="readoutProfile">亚洲脸型优先</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="analysis-shell">
+              <span class="mini-label">Anime Parsing</span>
+              <h3>动漫人物妆容分析</h3>
+              <p>这个板块单独承接角色图解析和真人脸映射结果：先拆角色妆容特色，再给出融合到真人脸上的妆后方向。</p>
+
+              <div class="analysis-grid">
+                <div class="analysis-card">
+                  <span>眼睛区域</span>
+                  <strong id="analysisFaceType">待识别</strong>
+                  <em id="analysisFaceTypeDesc">等待 FaceMesh 提取左右眼角、上下眼睑与眼裂高度。</em>
+                </div>
+                <div class="analysis-card">
+                  <span>嘴唇区域</span>
+                  <strong id="analysisContour">待识别</strong>
+                  <em id="analysisContourDesc">等待外唇轮廓、唇峰与嘴角定位。</em>
+                </div>
+                <div class="analysis-card">
+                  <span>脸颊区域</span>
+                  <strong id="analysisStyle">待识别</strong>
+                  <em id="analysisStyleDesc">等待颧区位置与腮红落点估计。</em>
+                </div>
+                <div class="analysis-card">
+                  <span>妆容映射层</span>
+                  <strong id="analysisFeature">待识别</strong>
+                  <em id="analysisFeatureDesc">等待角色图参数后生成眼影、腮红、口红与特殊细节建议。</em>
+                </div>
+                <div class="analysis-card">
+                  <span>运行模式</span>
+                  <strong id="analysisAdapt">待识别</strong>
+                  <em id="analysisAdaptDesc">支持本地图片与摄像头预览两种模式，并输出当前适配策略。</em>
+                </div>
+                <div class="analysis-card">
+                  <span>关键点引擎</span>
+                  <strong id="analysisEngine">启发式关键点</strong>
+                  <em id="analysisEngineDesc">若浏览器可联网，将尝试加载 MediaPipe FaceMesh；否则使用本地启发式轮廓引导。</em>
+                </div>
+              </div>
+
+              <div class="analysis-tags" id="analysisTags">
+                <span class="analysis-tag">等待识别</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card glass">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">竞争差异</span>
+              <h2>与内容社区、综合平台和线下工作室相比，我们更像“中台型基础设施”</h2>
+            </div>
+            <p>
+              这里直接吸收了设计文档里的竞品分析框架，适合在答辩或合作沟通时快速说明差异化位置。
+            </p>
+          </div>
+
+          <div class="comparison">
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>维度</th>
+                  <th>内容社区</th>
+                  <th>综合生活平台</th>
+                  <th>线下工作室</th>
+                  <th>CosFusion</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>核心能力</td>
+                  <td>UGC 教程与交流</td>
+                  <td>内容种草与电商转化</td>
+                  <td>本地化单点服务</td>
+                  <td>AI 工具 + 商城 + OMO 服务闭环</td>
+                </tr>
+                <tr>
+                  <td>技术深度</td>
+                  <td>弱结构化内容为主</td>
+                  <td>美妆推荐较泛化</td>
+                  <td>依赖人工经验</td>
+                  <td>跨次元适配、建模、AR 指导与数据协同</td>
+                </tr>
+                <tr>
+                  <td>用户体验</td>
+                  <td>学习路径长，筛选成本高</td>
+                  <td>信息过载，二次元专属性不足</td>
+                  <td>服务不标准，跨城复用弱</td>
+                  <td>从学、买、约到到场，路径更短更顺</td>
+                </tr>
+                <tr>
+                  <td>品牌叙事</td>
+                  <td>社区氛围强</td>
+                  <td>流量规模大</td>
+                  <td>面对面互动强</td>
+                  <td>技术、正版、国风表达与服务网络并重</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section-card glass" id="business">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">商业模式</span>
+              <h2>不依赖单一广告收入，而是做多元变现与生态反哺</h2>
+            </div>
+            <p>
+              这一部分建议继续保留创业计划书里的“B 端 + C 端 + 数据衍生”框架，清晰、好讲，也便于后续扩写成投资人版本。
+            </p>
+          </div>
+
+          <div class="business-grid">
+            <article class="business-card">
+              <span class="card-index">C</span>
+              <h3>C 端收入</h3>
+              <p>
+                面向普通用户提供基础功能免费，高阶版本通过会员订阅、高清渲染、独家教程、联名素材库等实现增值。
+              </p>
+              <ul>
+                <li>会员订阅</li>
+                <li>定制化服务佣金</li>
+                <li>联名套组与数字内容</li>
+              </ul>
+            </article>
+
+            <article class="business-card">
+              <span class="card-index">B</span>
+              <h3>B 端协同</h3>
+              <p>
+                面向妆造工作室、服装租赁商、品牌方和活动方提供流量分发、订单撮合、数据化运营工具和品牌联动能力。
+              </p>
+              <ul>
+                <li>商家入驻与订单佣金</li>
+                <li>品牌联名合作</li>
+                <li>服务商评级与流量投放</li>
+              </ul>
+            </article>
+
+            <article class="business-card">
+              <span class="card-index">D</span>
+              <h3>数据与生态增益</h3>
+              <p>
+                在合规前提下，将用户偏好、角色热度与消费路径沉淀为平台洞察，用于优化供给侧产品、内容与服务网络。
+              </p>
+              <ul>
+                <li>反向驱动选品与供应链</li>
+                <li>服务网络布局优化</li>
+                <li>IP 联动与活动策划支持</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="section-card glass" id="roadmap">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">发展路线</span>
+              <h2>从原型验证，到区域复制，再到次元生态扩展</h2>
+            </div>
+            <p>
+              这里把计划书中的阶段市场策略和设计文档中的当前进展揉成一条更适合官网表达的路线图。
+            </p>
+          </div>
+
+          <div class="timeline">
+            <article class="timeline-card">
+              <span class="pill">阶段一</span>
+              <strong>原型验证与核心功能打磨</strong>
+              <p>
+                先把 AI 妆造主线跑通，完善首页推荐、商城分类、购物车、线下服务与 AI 指导页面，建立第一批可验证的用户反馈。
+              </p>
+            </article>
+
+            <article class="timeline-card">
+              <span class="pill">阶段二</span>
+              <strong>服务网络与商品体系扩展</strong>
+              <p>
+                围绕重点城市与高频漫展场景扩展服务商网络，同步完善国风角色、联名套组和新手套餐等商业化产品。
+              </p>
+            </article>
+
+            <article class="timeline-card">
+              <span class="pill">阶段三</span>
+              <strong>数字形象与内容生态升级</strong>
+              <p>
+                向更广的虚拟形象管理、国风文化表达与数字资产玩法延展，让平台从工具升级为次元消费与创作入口。
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section-card glass">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">治理与风控</span>
+              <h2>技术再强，也要同步把合规、版权和服务履约讲清楚</h2>
+            </div>
+            <p>
+              这一段很适合提升评审与合作方的信任感，也能让首页从“概念页”升级成更完整的项目说明页。
+            </p>
+          </div>
+
+          <div class="risk-grid">
+            <article class="risk-card">
+              <span class="mini-label">数据安全</span>
+              <h3>面部数据与隐私保护</h3>
+              <p>
+                采用最小必要采集思路，结合联邦学习、脱敏存储和权限分层，减少敏感数据直接暴露风险。
+              </p>
+            </article>
+
+            <article class="risk-card">
+              <span class="mini-label">知识产权</span>
+              <h3>角色素材与联名合作合规化</h3>
+              <p>
+                对角色数据、原画引用、联名开发和平台内容进行版权治理，降低侵权与商用风险。
+              </p>
+            </article>
+
+            <article class="risk-card">
+              <span class="mini-label">服务质量</span>
+              <h3>线下履约与用户评价体系</h3>
+              <p>
+                通过服务商认证、评价机制、保证金与订单流程设计，减少爽约、货不对板和体验不一致的问题。
+              </p>
+            </article>
+
+            <article class="risk-card">
+              <span class="mini-label">平台责任</span>
+              <h3>内容审核与用户保障</h3>
+              <p>
+                围绕推荐逻辑、商品信息、线下服务与用户沟通建立治理框架，为后续规模化运营预留制度基础。
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section-card glass">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">当前进展</span>
+              <h2>从项目计划书走向真实产品，这一版首页先把可信度立住</h2>
+            </div>
+            <p>
+              与原先更偏“概念展示”的表达相比，这里强化了产品结构、市场逻辑、技术壁垒、风控治理和阶段路线。
+            </p>
+          </div>
+
+          <div class="progress-grid">
+            <article class="progress-card">
+              <strong>首页信息架构重构</strong>
+              <p>补齐项目定位、市场机会、商业模式、风险治理与路线图，页面更像完整官网首页而不是单页草图。</p>
+            </article>
+
+            <article class="progress-card">
+              <strong>文案与计划书对齐</strong>
+              <p>将“AI 工具 + 垂直电商 + OMO 服务”的核心叙事贯穿整页，并强化国风与国产 IP 的差异化表达。</p>
+            </article>
+
+            <article class="progress-card">
+              <strong>技术表达可视化</strong>
+              <p>把复杂技术说明转化成更适合网页阅读的模块化信息，兼顾可信度、可读性和答辩展示效果。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="cta" id="cta">
+          <div>
+            <span class="eyebrow">Next Step</span>
+            <h2>这版首页已经可以继续往完整官网、答辩页或招商页扩展。</h2>
+            <p>
+              现在最自然的下一步，是继续拆出“技术详情页”“市场与融资页”“小程序原型展示页”，或者把这页接成可部署的正式前端站点。
+            </p>
+            <div class="footer-note">内容已按你提供的创业计划书与设计开发文档进行了细化整理与结构升级。</div>
+          </div>
+
+          <div class="cta__actions">
+            <a class="button button--primary" href="#top">回到顶部</a>
+            <a class="button" href="#business">查看商业模式</a>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script>
+      (() => {
+        const sourceCanvas = document.getElementById("sourceCanvas");
+        const canvas = document.getElementById("tryonCanvas");
+        const sourceContext = sourceCanvas?.getContext("2d");
+        const context = canvas?.getContext("2d");
+        const video = document.getElementById("tryonVideo");
+        const image = document.getElementById("tryonImage");
+        const uploadInput = document.getElementById("faceUpload");
+        const animeUploadInput = document.getElementById("animeUpload");
+        const animeReferenceCanvas = document.getElementById("animeReferenceCanvas");
+        const animeReferenceContext = animeReferenceCanvas?.getContext("2d");
+        const animeReferenceImage = new Image();
+        const startCameraBtn = document.getElementById("startCameraBtn");
+        const stopCameraBtn = document.getElementById("stopCameraBtn");
+        const captureFrameBtn = document.getElementById("captureFrameBtn");
+        const demoStatus = document.getElementById("demoStatus");
+        const modelViewport = document.getElementById("modelViewport");
+        const modelFigure = document.getElementById("modelFigure");
+        const modelFace = document.getElementById("modelFace");
+
+        if (!sourceCanvas || !sourceContext || !canvas || !context || !video || !image || !uploadInput || !demoStatus) {
+          return;
+        }
+
+        const ranges = {
+          jaw: document.getElementById("jawRange"),
+          eye: document.getElementById("eyeRange"),
+          blush: document.getElementById("blushRange"),
+          lip: document.getElementById("lipRange"),
+          glow: document.getElementById("glowRange"),
+          asianFit: document.getElementById("asianFitRange"),
+        };
+
+        const rangeOutputs = {
+          jaw: document.getElementById("jawRangeValue"),
+          eye: document.getElementById("eyeRangeValue"),
+          blush: document.getElementById("blushRangeValue"),
+          lip: document.getElementById("lipRangeValue"),
+          glow: document.getElementById("glowRangeValue"),
+          asianFit: document.getElementById("asianFitRangeValue"),
+        };
+
+        const readoutStyle = document.getElementById("readoutStyle");
+        const readoutScene = document.getElementById("readoutScene");
+        const readoutGuide = document.getElementById("readoutGuide");
+        const readoutMood = document.getElementById("readoutMood");
+        const readoutProfile = document.getElementById("readoutProfile");
+        const analysisFaceType = document.getElementById("analysisFaceType");
+        const analysisFaceTypeDesc = document.getElementById("analysisFaceTypeDesc");
+        const analysisContour = document.getElementById("analysisContour");
+        const analysisContourDesc = document.getElementById("analysisContourDesc");
+        const analysisStyle = document.getElementById("analysisStyle");
+        const analysisStyleDesc = document.getElementById("analysisStyleDesc");
+        const analysisFeature = document.getElementById("analysisFeature");
+        const analysisFeatureDesc = document.getElementById("analysisFeatureDesc");
+        const analysisAdapt = document.getElementById("analysisAdapt");
+        const analysisAdaptDesc = document.getElementById("analysisAdaptDesc");
+        const analysisEngine = document.getElementById("analysisEngine");
+        const analysisEngineDesc = document.getElementById("analysisEngineDesc");
+        const analysisTags = document.getElementById("analysisTags");
+        const animeArchetype = document.getElementById("animeArchetype");
+        const animeKeywords = document.getElementById("animeKeywords");
+        const animeContourTarget = document.getElementById("animeContourTarget");
+        const animePaletteText = document.getElementById("animePaletteText");
+        const animeSpecialDetail = document.getElementById("animeSpecialDetail");
+        const animeAccessorySuggestion = document.getElementById("animeAccessorySuggestion");
+        const swatch1 = document.getElementById("swatch1");
+        const swatch2 = document.getElementById("swatch2");
+        const swatch3 = document.getElementById("swatch3");
+        const presetButtons = Array.from(document.querySelectorAll("[data-preset]"));
+
+        const presets = {
+          natural: {
+            label: "自然感淡妆",
+            scene: "日常漫展 / 新手试妆",
+            guide: "低门槛引导线",
+            mood: "柔和、通透、易上手",
+            colors: {
+              blush: "rgba(241, 170, 188, 0.22)",
+              eye: "rgba(201, 175, 255, 0.34)",
+              lip: "rgba(219, 118, 146, 0.58)",
+              guide: "rgba(255, 244, 214, 0.9)",
+              overlayA: "rgba(255, 229, 221, 0.18)",
+              overlayB: "rgba(188, 170, 255, 0.08)",
+              accent: "#ef8ca4",
+              accentSoft: "rgba(239, 140, 164, 0.22)",
+              eyeModel: "#caa7ff",
+            },
+            values: { jaw: 55, eye: 62, blush: 50, lip: 58, glow: 54 },
+          },
+          glam: {
+            label: "角色浓妆",
+            scene: "舞台妆 / 漫展高还原",
+            guide: "高对比角色线",
+            mood: "锐利、戏剧化、角色感强",
+            colors: {
+              blush: "rgba(255, 102, 153, 0.24)",
+              eye: "rgba(146, 91, 255, 0.42)",
+              lip: "rgba(228, 67, 119, 0.76)",
+              guide: "rgba(255, 228, 246, 0.92)",
+              overlayA: "rgba(255, 116, 175, 0.18)",
+              overlayB: "rgba(122, 98, 255, 0.12)",
+              accent: "#f56a9c",
+              accentSoft: "rgba(245, 106, 156, 0.24)",
+              eyeModel: "#9b79ff",
+            },
+            values: { jaw: 70, eye: 82, blush: 57, lip: 76, glow: 61 },
+          },
+          guofeng: {
+            label: "新国风妆造",
+            scene: "国风角色 / 东方审美",
+            guide: "轮廓与纹样并重",
+            mood: "暖金、雅致、东方韵味",
+            colors: {
+              blush: "rgba(214, 98, 98, 0.18)",
+              eye: "rgba(238, 179, 66, 0.3)",
+              lip: "rgba(199, 74, 74, 0.72)",
+              guide: "rgba(255, 236, 199, 0.92)",
+              overlayA: "rgba(244, 195, 116, 0.18)",
+              overlayB: "rgba(214, 83, 83, 0.08)",
+              accent: "#d96b63",
+              accentSoft: "rgba(217, 107, 99, 0.22)",
+              eyeModel: "#efc468",
+            },
+            values: { jaw: 60, eye: 68, blush: 46, lip: 70, glow: 64 },
+          },
+        };
+
+        const state = {
+          mode: "placeholder",
+          stream: null,
+          preset: "natural",
+          imageReady: false,
+          animationId: 0,
+          frameTick: 0,
+          landmarks: null,
+          faceMesh: null,
+          faceMeshBusy: false,
+          faceMeshReady: false,
+          faceMeshPromise: null,
+          faceMeshError: false,
+          referenceLoaded: false,
+          referenceAnalysis: null,
+          referenceName: "",
+        };
+
+        function setStatus(text) {
+          demoStatus.textContent = text;
+        }
+
+        function updateReadoutsForWaitingReference() {
+          const preset = presets[state.preset];
+          readoutStyle.textContent = preset.label;
+          readoutScene.textContent = preset.scene;
+          readoutGuide.textContent = preset.guide;
+          readoutMood.textContent = `${preset.mood} / 上传角色图可自动换妆`;
+          if (readoutProfile) {
+            readoutProfile.textContent = `亚洲脸型优先 / ${ranges.asianFit?.value || 72}`;
+          }
+        }
+
+        function updateReadoutsFromReference() {
+          const reference = state.referenceAnalysis;
+          const preset = presets[state.preset];
+          if (!reference) {
+            updateReadoutsForWaitingReference();
+            return;
+          }
+
+          readoutStyle.textContent = `${reference.archetype} / ${preset.label}`;
+          readoutScene.textContent = `${reference.contourTarget} / ${reference.blushText}`;
+          readoutGuide.textContent = `${reference.eyeShadowText} / ${reference.specialText}`;
+          readoutMood.textContent = `${reference.lipText} / ${reference.accessoryText}`;
+          if (readoutProfile) {
+            readoutProfile.textContent = `亚洲脸型优先 / ${ranges.asianFit?.value || 72}`;
+          }
+        }
+
+        function getValues() {
+          return {
+            jaw: Number(ranges.jaw.value),
+            eye: Number(ranges.eye.value),
+            blush: Number(ranges.blush.value),
+            lip: Number(ranges.lip.value),
+            glow: Number(ranges.glow.value),
+            asianFit: Number(ranges.asianFit?.value || 72),
+          };
+        }
+
+        function syncOutputs() {
+          Object.entries(ranges).forEach(([key, input]) => {
+            if (rangeOutputs[key]) {
+              rangeOutputs[key].textContent = input.value;
+            }
+          });
+        }
+
+        function loadScript(src) {
+          return new Promise((resolve, reject) => {
+            const existing = document.querySelector(`script[data-src="${src}"]`);
+            if (existing) {
+              existing.addEventListener("load", resolve, { once: true });
+              existing.addEventListener("error", reject, { once: true });
+              if (existing.dataset.loaded === "true") {
+                resolve();
+              }
+              return;
+            }
+
+            const script = document.createElement("script");
+            script.src = src;
+            script.async = true;
+            script.dataset.src = src;
+            script.onload = () => {
+              script.dataset.loaded = "true";
+              resolve();
+            };
+            script.onerror = reject;
+            document.head.appendChild(script);
+          });
+        }
+
+        function setAnalysisEngine(text, desc) {
+          if (analysisEngine) analysisEngine.textContent = text;
+          if (analysisEngineDesc) analysisEngineDesc.textContent = desc;
+        }
+
+        async function ensureFaceMesh() {
+          if (state.faceMesh) {
+            return state.faceMesh;
+          }
+
+          if (state.faceMeshError) {
+            return null;
+          }
+
+          if (!state.faceMeshPromise) {
+            setAnalysisEngine("正在加载 FaceMesh", "如果浏览器能访问 CDN，将启用真实关键点；否则自动回退到启发式模式。");
+            state.faceMeshPromise = loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js")
+              .then(() => {
+                if (!window.FaceMesh) {
+                  throw new Error("FaceMesh unavailable");
+                }
+
+                const instance = new window.FaceMesh({
+                  locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
+                });
+
+                instance.setOptions({
+                  maxNumFaces: 1,
+                  refineLandmarks: true,
+                  minDetectionConfidence: 0.5,
+                  minTrackingConfidence: 0.5,
+                });
+
+                instance.onResults((results) => {
+                  state.landmarks = results?.multiFaceLandmarks?.[0] || null;
+                  analyzeFace();
+                  renderAll();
+                });
+
+                state.faceMesh = instance;
+                state.faceMeshReady = true;
+                setAnalysisEngine("MediaPipe FaceMesh", "已启用真实 468 点人脸关键点识别，将用于眼妆范围、轮廓和高光区域分析。");
+                return instance;
+              })
+              .catch((error) => {
+                console.error(error);
+                state.faceMeshError = true;
+                setAnalysisEngine("启发式关键点", "FaceMesh 未成功加载，当前使用本地轮廓估计与参数驱动的解析模式。");
+                return null;
+              });
+          }
+
+          return state.faceMeshPromise;
+        }
+
+        async function runFaceMesh(source) {
+          const mesh = await ensureFaceMesh();
+          if (!mesh || state.faceMeshBusy) {
+            return;
+          }
+
+          try {
+            state.faceMeshBusy = true;
+            await mesh.send({ image: source });
+          } catch (error) {
+            console.error(error);
+          } finally {
+            state.faceMeshBusy = false;
+          }
+        }
+
+        function setTagList(tags) {
+          if (!analysisTags) {
+            return;
+          }
+
+          analysisTags.innerHTML = "";
+          tags.forEach((tag) => {
+            const element = document.createElement("span");
+            element.className = "analysis-tag";
+            element.textContent = tag;
+            analysisTags.appendChild(element);
+          });
+        }
+
+        function rgbToHex(red, green, blue) {
+          return `#${[red, green, blue]
+            .map((value) => Math.max(0, Math.min(255, value)).toString(16).padStart(2, "0"))
+            .join("")}`;
+        }
+
+        function rgbToHsl(red, green, blue) {
+          const r = red / 255;
+          const g = green / 255;
+          const b = blue / 255;
+          const max = Math.max(r, g, b);
+          const min = Math.min(r, g, b);
+          let h = 0;
+          let s = 0;
+          const l = (max + min) / 2;
+
+          if (max !== min) {
+            const d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+            switch (max) {
+              case r:
+                h = (g - b) / d + (g < b ? 6 : 0);
+                break;
+              case g:
+                h = (b - r) / d + 2;
+                break;
+              default:
+                h = (r - g) / d + 4;
+            }
+
+            h /= 6;
+          }
+
+          return { h: h * 360, s, l };
+        }
+
+        function quantizeColor(red, green, blue) {
+          return [
+            Math.round(red / 32) * 32,
+            Math.round(green / 32) * 32,
+            Math.round(blue / 32) * 32,
+          ];
+        }
+
+        function updateReferenceUi(result) {
+          if (!result) {
+            if (animeArchetype) animeArchetype.textContent = "等待角色图";
+            if (animeKeywords) animeKeywords.textContent = "等待角色图";
+            if (animeContourTarget) animeContourTarget.textContent = "等待角色图";
+            if (animePaletteText) animePaletteText.textContent = "等待角色图";
+            if (animeSpecialDetail) animeSpecialDetail.textContent = "等待角色图";
+            if (animeAccessorySuggestion) animeAccessorySuggestion.textContent = "等待角色图";
+            [swatch1, swatch2, swatch3].forEach((swatch) => {
+              if (swatch) swatch.style.background = "rgba(255,255,255,0.1)";
+            });
+            return;
+          }
+
+          if (animeArchetype) animeArchetype.textContent = result.archetype;
+          if (animeKeywords) animeKeywords.textContent = result.eyeShadowText || result.keywords.join(" / ");
+          if (animeContourTarget) animeContourTarget.textContent = result.blushText || result.contourTarget;
+          if (animePaletteText) animePaletteText.textContent = result.lipText || result.palette.join(" · ");
+          if (animeSpecialDetail) animeSpecialDetail.textContent = result.specialText || "基础眼线";
+          if (animeAccessorySuggestion) animeAccessorySuggestion.textContent = result.accessoryText || "等待角色图";
+          [swatch1, swatch2, swatch3].forEach((swatch, index) => {
+            if (swatch) {
+              swatch.style.background = result.palette[index] || "rgba(255,255,255,0.1)";
+            }
+          });
+        }
+
+        function renderReferencePreview() {
+          if (!animeReferenceCanvas || !animeReferenceContext) {
+            return;
+          }
+
+          const rect = animeReferenceCanvas.getBoundingClientRect();
+          const width = Math.max(160, Math.round(rect.width || 160));
+          const height = Math.max(220, Math.round(rect.height || 220));
+          const dpr = window.devicePixelRatio || 1;
+
+          if (animeReferenceCanvas.width !== width * dpr || animeReferenceCanvas.height !== height * dpr) {
+            animeReferenceCanvas.width = width * dpr;
+            animeReferenceCanvas.height = height * dpr;
+          }
+
+          animeReferenceContext.setTransform(dpr, 0, 0, dpr, 0, 0);
+          animeReferenceContext.clearRect(0, 0, width, height);
+
+          if (state.referenceLoaded && animeReferenceImage.naturalWidth) {
+            fitDraw.call({ context: animeReferenceContext }, animeReferenceImage, width, height);
+            return;
+          }
+
+          const gradient = animeReferenceContext.createLinearGradient(0, 0, 0, height);
+          gradient.addColorStop(0, "#202020");
+          gradient.addColorStop(1, "#0f0f0f");
+          animeReferenceContext.fillStyle = gradient;
+          animeReferenceContext.fillRect(0, 0, width, height);
+          animeReferenceContext.fillStyle = "rgba(246,242,235,0.82)";
+          animeReferenceContext.font = "600 15px Segoe UI";
+          animeReferenceContext.textAlign = "center";
+          animeReferenceContext.fillText("上传角色参考图", width / 2, height * 0.48);
+          animeReferenceContext.fillStyle = "rgba(246,242,235,0.56)";
+          animeReferenceContext.font = "12px Segoe UI";
+          animeReferenceContext.fillText("系统将提取主色、气质和轮廓方向", width / 2, height * 0.56);
+        }
+
+        function analyzeReferenceImage(filename = state.referenceName) {
+          if (!animeReferenceImage.naturalWidth) {
+            state.referenceAnalysis = null;
+            updateReferenceUi(null);
+            renderReferencePreview();
+            return null;
+          }
+
+          const sampleCanvas = document.createElement("canvas");
+          const sampleSize = 48;
+          sampleCanvas.width = sampleSize;
+          sampleCanvas.height = sampleSize;
+          const sampleContext = sampleCanvas.getContext("2d", { willReadFrequently: true });
+          sampleContext.drawImage(animeReferenceImage, 0, 0, sampleSize, sampleSize);
+          const { data } = sampleContext.getImageData(0, 0, sampleSize, sampleSize);
+
+          let totalR = 0;
+          let totalG = 0;
+          let totalB = 0;
+          let totalS = 0;
+          let totalL = 0;
+          let count = 0;
+          const buckets = new Map();
+
+          for (let index = 0; index < data.length; index += 4) {
+            const alpha = data[index + 3];
+            if (alpha < 20) continue;
+
+            const red = data[index];
+            const green = data[index + 1];
+            const blue = data[index + 2];
+            const [qr, qg, qb] = quantizeColor(red, green, blue);
+            const key = `${qr},${qg},${qb}`;
+            buckets.set(key, (buckets.get(key) || 0) + 1);
+
+            const hsl = rgbToHsl(red, green, blue);
+            totalR += red;
+            totalG += green;
+            totalB += blue;
+            totalS += hsl.s;
+            totalL += hsl.l;
+            count += 1;
+          }
+
+          if (!count) {
+            return null;
+          }
+
+          const average = {
+            r: Math.round(totalR / count),
+            g: Math.round(totalG / count),
+            b: Math.round(totalB / count),
+            s: totalS / count,
+            l: totalL / count,
+          };
+          const hsl = rgbToHsl(average.r, average.g, average.b);
+
+          const palette = Array.from(buckets.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .map(([key]) => {
+              const [red, green, blue] = key.split(",").map(Number);
+              return rgbToHex(red, green, blue);
+            });
+
+          while (palette.length < 3) {
+            palette.push(rgbToHex(average.r, average.g, average.b));
+          }
+
+          let archetype = "柔和幻想系";
+          let keywords = ["清透", "柔光", "渐层眼妆"];
+          let contourTarget = "柔化下颌，保留中庭通透感";
+          let blushText = "轻扫苹果肌";
+          let specialText = "基础眼线";
+          let accessoryText = "建议搭配浅色假发 / 发饰";
+
+          if (hsl.s > 0.42 && (hsl.h < 25 || hsl.h > 320)) {
+            archetype = "高饱和角色系";
+            keywords = ["高对比", "强角色感", "舞台唇妆"];
+            contourTarget = "强化眼尾与唇峰，轮廓收束更明显";
+            blushText = "横向角色腮红";
+            specialText = "上扬眼线 / 局部亮片";
+            accessoryText = "建议搭配深色或撞色发饰";
+          } else if (hsl.h > 25 && hsl.h < 75) {
+            archetype = "新国风东方系";
+            keywords = ["暖金", "绛红", "东方纹样"];
+            contourTarget = "提亮中轴与颧区，适合花钿与国风轮廓线";
+            blushText = "中庭提气腮红";
+            specialText = "花钿 / 金色细节";
+            accessoryText = "建议搭配簪花、流苏或古风发饰";
+          } else if (hsl.h > 190 && hsl.h < 290) {
+            archetype = "冷调幻想系";
+            keywords = ["冷紫", "高光感", "轻科幻角色"];
+            contourTarget = "强调额头、鼻梁高光和锐化眼妆走向";
+            blushText = "低饱和冷调腮红";
+            specialText = "冷调眼线 / 亮面高光";
+            accessoryText = "建议搭配银色或冷调配饰";
+          }
+
+          if (String(filename || "").match(/国风|古风|汉服|华|凤/i)) {
+            archetype = "新国风东方系";
+            keywords = ["暖金", "绛红", "东方纹样"];
+            contourTarget = "提亮中轴与颧区，适合花钿与国风轮廓线";
+            blushText = "中庭提气腮红";
+            specialText = "花钿 / 金色细节";
+            accessoryText = "建议搭配簪花、流苏或古风发饰";
+          } else if (String(filename || "").match(/赛博|紫|夜|cool|cyber/i)) {
+            specialText = "冷调眼线 / 亮面高光";
+            accessoryText = "建议搭配银色或冷调配饰";
+          }
+
+          const eyeShadowText = `${keywords[0]} / ${keywords[1]}`;
+          const lipText = `${keywords[keywords.length - 1]} / ${palette[0]}`;
+
+          const result = {
+            average,
+            palette,
+            hue: hsl.h,
+            saturation: hsl.s,
+            lightness: hsl.l,
+            archetype,
+            keywords,
+            contourTarget,
+            blushText,
+            specialText,
+            accessoryText,
+            eyeShadowText,
+            lipText,
+          };
+
+          state.referenceAnalysis = result;
+          updateReferenceUi(result);
+          renderReferencePreview();
+          return result;
+        }
+
+        function fitDraw(source, width, height) {
+          const targetContext = this?.context || context;
+          const sw = source.videoWidth || source.naturalWidth || source.width;
+          const sh = source.videoHeight || source.naturalHeight || source.height;
+
+          if (!sw || !sh) {
+            return;
+          }
+
+          const sourceRatio = sw / sh;
+          const targetRatio = width / height;
+          let sx = 0;
+          let sy = 0;
+          let sWidth = sw;
+          let sHeight = sh;
+
+          if (sourceRatio > targetRatio) {
+            sWidth = sh * targetRatio;
+            sx = (sw - sWidth) / 2;
+          } else {
+            sHeight = sw / targetRatio;
+            sy = (sh - sHeight) / 2;
+          }
+
+          targetContext.drawImage(source, sx, sy, sWidth, sHeight, 0, 0, width, height);
+        }
+
+        function drawPlaceholder(width, height) {
+          const background = context.createLinearGradient(0, 0, 0, height);
+          background.addColorStop(0, "#1b1b1b");
+          background.addColorStop(1, "#0b0b0b");
+          context.fillStyle = background;
+          context.fillRect(0, 0, width, height);
+
+          const halo = context.createRadialGradient(width / 2, height * 0.22, 20, width / 2, height * 0.22, width * 0.5);
+          halo.addColorStop(0, "rgba(240, 223, 194, 0.28)");
+          halo.addColorStop(1, "rgba(240, 223, 194, 0)");
+          context.fillStyle = halo;
+          context.fillRect(0, 0, width, height);
+
+          context.fillStyle = "rgba(255,255,255,0.12)";
+          context.beginPath();
+          context.ellipse(width / 2, height * 0.42, width * 0.2, height * 0.24, 0, 0, Math.PI * 2);
+          context.fill();
+
+          context.fillStyle = "rgba(255,255,255,0.08)";
+          context.fillRect(width * 0.32, height * 0.58, width * 0.36, height * 0.22);
+
+          context.fillStyle = "rgba(246,242,235,0.9)";
+          context.font = "600 22px Segoe UI";
+          context.textAlign = "center";
+          context.fillText("上传一张正脸照片，或开启摄像头", width / 2, height * 0.84);
+
+          context.fillStyle = "rgba(246,242,235,0.62)";
+          context.font = "14px Segoe UI";
+          context.fillText("系统会在画面上生成妆容叠加、引导线和关键点示意", width / 2, height * 0.88);
+        }
+
+        function getCanvasMetrics(targetCanvas, targetContext) {
+          const rect = targetCanvas.getBoundingClientRect();
+          const width = Math.max(320, Math.round(rect.width || 640));
+          const height = Math.max(400, Math.round(rect.height || 800));
+          const dpr = window.devicePixelRatio || 1;
+
+          if (targetCanvas.width !== width * dpr || targetCanvas.height !== height * dpr) {
+            targetCanvas.width = width * dpr;
+            targetCanvas.height = height * dpr;
+          }
+
+          targetContext.setTransform(dpr, 0, 0, dpr, 0, 0);
+          targetContext.clearRect(0, 0, width, height);
+          return { width, height };
+        }
+
+        function drawBase(targetContext, width, height) {
+          if (state.mode === "camera" && video.readyState >= 2) {
+            fitDraw.call({ context: targetContext }, video, width, height);
+            return true;
+          }
+
+          if (state.mode === "image" && image.complete && image.naturalWidth) {
+            fitDraw.call({ context: targetContext }, image, width, height);
+            return true;
+          }
+
+          return false;
+        }
+
+        function canvasPoint(point, width, height) {
+          return {
+            x: point.x * width,
+            y: point.y * height,
+          };
+        }
+
+        function getFeaturePoints(width, height, values) {
+          if (state.landmarks) {
+            const point = (index) => canvasPoint(state.landmarks[index], width, height);
+            return {
+              forehead: point(10),
+              chin: point(152),
+              nose: point(1),
+              leftCheek: point(234),
+              rightCheek: point(454),
+              leftEyeOuter: point(33),
+              rightEyeOuter: point(263),
+              leftEyeUpper: point(159),
+              leftEyeLower: point(145),
+              rightEyeUpper: point(386),
+              rightEyeLower: point(374),
+              leftMouth: point(61),
+              rightMouth: point(291),
+            };
+          }
+
+          const centerX = width * 0.5;
+          const centerY = height * 0.47;
+          const faceWidth = width * (0.28 + values.jaw / 600);
+          const faceHeight = height * 0.34;
+          const blushOffset = (values.blush - 50) / 180;
+
+          return {
+            forehead: { x: centerX, y: centerY - faceHeight * 0.85 },
+            chin: { x: centerX, y: centerY + faceHeight * 0.92 },
+            nose: { x: centerX, y: centerY + faceHeight * 0.02 },
+            leftCheek: { x: centerX - faceWidth * 0.78, y: centerY + faceHeight * (0.16 + blushOffset) },
+            rightCheek: { x: centerX + faceWidth * 0.78, y: centerY + faceHeight * (0.16 + blushOffset) },
+            leftEyeOuter: { x: centerX - faceWidth * 0.46, y: centerY - faceHeight * 0.22 },
+            rightEyeOuter: { x: centerX + faceWidth * 0.46, y: centerY - faceHeight * 0.22 },
+            leftEyeUpper: { x: centerX - faceWidth * 0.3, y: centerY - faceHeight * 0.26 },
+            leftEyeLower: { x: centerX - faceWidth * 0.3, y: centerY - faceHeight * 0.17 },
+            rightEyeUpper: { x: centerX + faceWidth * 0.3, y: centerY - faceHeight * 0.26 },
+            rightEyeLower: { x: centerX + faceWidth * 0.3, y: centerY - faceHeight * 0.17 },
+            leftMouth: { x: centerX - faceWidth * 0.2, y: centerY + faceHeight * 0.48 },
+            rightMouth: { x: centerX + faceWidth * 0.2, y: centerY + faceHeight * 0.48 },
+          };
+        }
+
+        function drawGuides(width, height, colors, values) {
+          const points = getFeaturePoints(width, height, values);
+          const faceWidth = Math.abs(points.rightCheek.x - points.leftCheek.x) / 1.55;
+          const faceHeight = Math.abs(points.chin.y - points.forehead.y) / 1.8;
+          const eyeScale = 0.8 + values.eye / 250;
+          const glowStrength = values.glow / 100;
+
+          context.save();
+          context.strokeStyle = colors.guide;
+          context.lineWidth = 1.4;
+          context.setLineDash([7, 7]);
+
+          context.beginPath();
+          context.moveTo(points.forehead.x, points.forehead.y);
+          context.quadraticCurveTo(points.leftCheek.x, points.leftCheek.y - faceHeight * 0.7, points.chin.x, points.chin.y);
+          context.quadraticCurveTo(points.rightCheek.x, points.rightCheek.y - faceHeight * 0.7, points.forehead.x, points.forehead.y);
+          context.stroke();
+
+          context.beginPath();
+          context.moveTo(points.nose.x, points.forehead.y + faceHeight * 0.12);
+          context.lineTo(points.nose.x, points.chin.y);
+          context.stroke();
+
+          context.beginPath();
+          context.moveTo(points.leftEyeOuter.x - faceWidth * 0.18, points.leftEyeOuter.y);
+          context.lineTo(points.rightEyeOuter.x + faceWidth * 0.18, points.rightEyeOuter.y);
+          context.moveTo(points.leftCheek.x + faceWidth * 0.12, points.leftCheek.y);
+          context.lineTo(points.rightCheek.x - faceWidth * 0.12, points.rightCheek.y);
+          context.stroke();
+          context.setLineDash([]);
+
+          const eyeGradientLeft = context.createRadialGradient(points.leftEyeOuter.x, points.leftEyeOuter.y, 2, points.leftEyeOuter.x, points.leftEyeOuter.y, faceWidth * 0.36);
+          eyeGradientLeft.addColorStop(0, colors.eye);
+          eyeGradientLeft.addColorStop(1, "rgba(0,0,0,0)");
+          context.fillStyle = eyeGradientLeft;
+          context.beginPath();
+          context.ellipse(points.leftEyeOuter.x, points.leftEyeOuter.y, faceWidth * 0.26, faceHeight * 0.12 * eyeScale, -0.12, 0, Math.PI * 2);
+          context.fill();
+
+          const eyeGradientRight = context.createRadialGradient(points.rightEyeOuter.x, points.rightEyeOuter.y, 2, points.rightEyeOuter.x, points.rightEyeOuter.y, faceWidth * 0.36);
+          eyeGradientRight.addColorStop(0, colors.eye);
+          eyeGradientRight.addColorStop(1, "rgba(0,0,0,0)");
+          context.fillStyle = eyeGradientRight;
+          context.beginPath();
+          context.ellipse(points.rightEyeOuter.x, points.rightEyeOuter.y, faceWidth * 0.26, faceHeight * 0.12 * eyeScale, 0.12, 0, Math.PI * 2);
+          context.fill();
+
+          const blushLeft = context.createRadialGradient(points.leftCheek.x, points.leftCheek.y, 2, points.leftCheek.x, points.leftCheek.y, faceWidth * 0.42);
+          blushLeft.addColorStop(0, colors.blush);
+          blushLeft.addColorStop(1, "rgba(0,0,0,0)");
+          context.fillStyle = blushLeft;
+          context.beginPath();
+          context.ellipse(points.leftCheek.x, points.leftCheek.y, faceWidth * 0.28, faceHeight * 0.14, -0.22, 0, Math.PI * 2);
+          context.fill();
+
+          const blushRight = context.createRadialGradient(points.rightCheek.x, points.rightCheek.y, 2, points.rightCheek.x, points.rightCheek.y, faceWidth * 0.42);
+          blushRight.addColorStop(0, colors.blush);
+          blushRight.addColorStop(1, "rgba(0,0,0,0)");
+          context.fillStyle = blushRight;
+          context.beginPath();
+          context.ellipse(points.rightCheek.x, points.rightCheek.y, faceWidth * 0.28, faceHeight * 0.14, 0.22, 0, Math.PI * 2);
+          context.fill();
+
+          const glow = context.createRadialGradient(points.forehead.x, points.forehead.y + faceHeight * 0.34, 4, points.forehead.x, points.forehead.y + faceHeight * 0.34, faceWidth * 0.8);
+          glow.addColorStop(0, `rgba(255,255,255,${0.12 + glowStrength * 0.26})`);
+          glow.addColorStop(1, "rgba(255,255,255,0)");
+          context.fillStyle = glow;
+          context.fillRect(points.forehead.x - faceWidth, points.forehead.y, faceWidth * 2, faceHeight);
+
+          context.strokeStyle = colors.lip;
+          context.lineWidth = 3;
+          context.beginPath();
+          context.moveTo(points.leftMouth.x, points.leftMouth.y);
+          context.quadraticCurveTo(points.nose.x, points.leftMouth.y + faceHeight * 0.08, points.rightMouth.x, points.rightMouth.y);
+          context.stroke();
+
+          [points.forehead, points.nose, points.leftEyeOuter, points.rightEyeOuter, points.leftCheek, points.rightCheek, points.chin, points.leftMouth, points.rightMouth].forEach((point) => {
+            context.beginPath();
+            context.fillStyle = colors.guide;
+            context.arc(point.x, point.y, 2.6, 0, Math.PI * 2);
+            context.fill();
+          });
+
+          context.fillStyle = "rgba(0,0,0,0.42)";
+          context.fillRect(16, 16, 176, 54);
+          context.fillStyle = "rgba(246,242,235,0.9)";
+          context.font = "600 14px Segoe UI";
+          context.fillText(state.landmarks ? "FaceMesh Overlay" : "Heuristic Overlay", 30, 38);
+          context.fillStyle = "rgba(246,242,235,0.68)";
+          context.font = "12px Segoe UI";
+          context.fillText(`Jaw ${values.jaw} / Eye ${values.eye} / Glow ${values.glow}`, 30, 58);
+          context.restore();
+        }
+
+        function drawReferenceInset(width, height) {
+          if (!state.referenceLoaded || !animeReferenceImage.naturalWidth) {
+            return;
+          }
+
+          const insetWidth = width * 0.2;
+          const insetHeight = insetWidth * 1.25;
+          const insetX = width - insetWidth - 18;
+          const insetY = 18;
+
+          context.save();
+          context.fillStyle = "rgba(0,0,0,0.44)";
+          context.fillRect(insetX - 6, insetY - 6, insetWidth + 12, insetHeight + 32);
+          context.strokeStyle = "rgba(240,223,194,0.5)";
+          context.lineWidth = 1;
+          context.strokeRect(insetX - 6, insetY - 6, insetWidth + 12, insetHeight + 32);
+          context.drawImage(animeReferenceImage, 0, 0, animeReferenceImage.naturalWidth, animeReferenceImage.naturalHeight, insetX, insetY, insetWidth, insetHeight);
+          context.fillStyle = "rgba(246,242,235,0.92)";
+          context.font = "12px Segoe UI";
+          context.fillText("角色参考图", insetX, insetY + insetHeight + 18);
+          context.restore();
+        }
+
+        function drawAnimeFusion(width, height, colors, values) {
+          const points = getFeaturePoints(width, height, values);
+          const faceWidth = Math.abs(points.rightCheek.x - points.leftCheek.x);
+          const faceHeight = Math.abs(points.chin.y - points.forehead.y);
+          const reference = state.referenceAnalysis;
+          const primary = reference?.palette?.[0] || colors.lip;
+          const secondary = reference?.palette?.[1] || colors.eye;
+          const tertiary = reference?.palette?.[2] || colors.blush;
+
+          context.save();
+
+          const contourGradient = context.createLinearGradient(points.leftCheek.x, points.forehead.y, points.rightCheek.x, points.chin.y);
+          contourGradient.addColorStop(0, `${primary}22`);
+          contourGradient.addColorStop(1, `${secondary}18`);
+          context.fillStyle = contourGradient;
+          context.beginPath();
+          context.moveTo(points.forehead.x, points.forehead.y + faceHeight * 0.06);
+          context.quadraticCurveTo(points.leftCheek.x + faceWidth * 0.05, points.leftCheek.y - faceHeight * 0.24, points.chin.x, points.chin.y);
+          context.quadraticCurveTo(points.rightCheek.x - faceWidth * 0.05, points.rightCheek.y - faceHeight * 0.24, points.forehead.x, points.forehead.y + faceHeight * 0.06);
+          context.fill();
+
+          context.strokeStyle = secondary;
+          context.lineWidth = 4;
+          context.beginPath();
+          context.moveTo(points.leftEyeOuter.x - faceWidth * 0.08, points.leftEyeOuter.y - faceHeight * 0.02);
+          context.quadraticCurveTo(points.leftEyeUpper.x, points.leftEyeUpper.y - faceHeight * 0.06, points.leftEyeUpper.x + faceWidth * 0.18, points.leftEyeUpper.y + faceHeight * 0.01);
+          context.stroke();
+          context.beginPath();
+          context.moveTo(points.rightEyeOuter.x + faceWidth * 0.08, points.rightEyeOuter.y - faceHeight * 0.02);
+          context.quadraticCurveTo(points.rightEyeUpper.x, points.rightEyeUpper.y - faceHeight * 0.06, points.rightEyeUpper.x - faceWidth * 0.18, points.rightEyeUpper.y + faceHeight * 0.01);
+          context.stroke();
+
+          context.fillStyle = `${secondary}55`;
+          context.beginPath();
+          context.ellipse(points.leftEyeOuter.x, points.leftEyeOuter.y, faceWidth * 0.16, faceHeight * (0.03 + values.eye / 1800), -0.22, 0, Math.PI * 2);
+          context.fill();
+          context.beginPath();
+          context.ellipse(points.rightEyeOuter.x, points.rightEyeOuter.y, faceWidth * 0.16, faceHeight * (0.03 + values.eye / 1800), 0.22, 0, Math.PI * 2);
+          context.fill();
+
+          context.fillStyle = `${primary}aa`;
+          context.beginPath();
+          context.moveTo(points.leftMouth.x, points.leftMouth.y);
+          context.quadraticCurveTo(points.nose.x, points.leftMouth.y + faceHeight * 0.08, points.rightMouth.x, points.rightMouth.y);
+          context.quadraticCurveTo(points.nose.x, points.leftMouth.y + faceHeight * 0.18, points.leftMouth.x, points.leftMouth.y);
+          context.fill();
+
+          context.strokeStyle = `${tertiary}aa`;
+          context.lineWidth = 2;
+          context.beginPath();
+          context.moveTo(points.nose.x, points.forehead.y + faceHeight * 0.24);
+          context.lineTo(points.nose.x, points.chin.y - faceHeight * 0.28);
+          context.stroke();
+
+          if (reference?.archetype?.includes("国风")) {
+            context.fillStyle = `${primary}cc`;
+            context.beginPath();
+            context.arc(points.forehead.x, points.forehead.y + faceHeight * 0.2, faceWidth * 0.04, 0, Math.PI * 2);
+            context.fill();
+          }
+
+          context.fillStyle = `${tertiary}55`;
+          context.beginPath();
+          context.ellipse(points.leftCheek.x, points.leftCheek.y, faceWidth * 0.12, faceHeight * 0.06, -0.3, 0, Math.PI * 2);
+          context.fill();
+          context.beginPath();
+          context.ellipse(points.rightCheek.x, points.rightCheek.y, faceWidth * 0.12, faceHeight * 0.06, 0.3, 0, Math.PI * 2);
+          context.fill();
+
+          context.fillStyle = "rgba(0,0,0,0.46)";
+          context.fillRect(18, height - 78, 210, 52);
+          context.fillStyle = "rgba(246,242,235,0.92)";
+          context.font = "600 14px Segoe UI";
+          context.fillText("角色妆容已融合到真人脸", 32, height - 48);
+          context.fillStyle = "rgba(246,242,235,0.68)";
+          context.font = "12px Segoe UI";
+          context.fillText(reference ? reference.keywords.join(" / ") : "风格预设映射中", 32, height - 28);
+
+          drawReferenceInset(width, height);
+          context.restore();
+        }
+
+        function renderSource() {
+          const { width, height } = getCanvasMetrics(sourceCanvas, sourceContext);
+          const hasSource = drawBase(sourceContext, width, height);
+          if (!hasSource) {
+            drawPlaceholder(width, height);
+          }
+        }
+
+        function renderPreview() {
+          const { width, height } = getCanvasMetrics(canvas, context);
+          const hasSource = drawBase(context, width, height);
+          if (!hasSource) {
+            drawPlaceholder(width, height);
+          }
+
+          const preset = presets[state.preset];
+          const values = getValues();
+          const reference = state.referenceAnalysis;
+          const overlay = context.createLinearGradient(0, 0, width, height);
+          overlay.addColorStop(0, reference ? `${reference.palette[0]}28` : preset.colors.overlayA);
+          overlay.addColorStop(1, reference ? `${reference.palette[1]}20` : preset.colors.overlayB);
+          context.fillStyle = overlay;
+          context.fillRect(0, 0, width, height);
+
+          const guideColors = reference
+            ? {
+                ...preset.colors,
+                eye: `${reference.palette[1]}66`,
+                lip: `${reference.palette[0]}cc`,
+                blush: `${reference.palette[2]}44`,
+                guide: "rgba(255, 245, 220, 0.9)",
+              }
+            : preset.colors;
+
+          drawGuides(width, height, guideColors, values);
+          drawAnimeFusion(width, height, guideColors, values);
+        }
+
+        function renderAll() {
+          renderSource();
+          renderPreview();
+        }
+
+        function analyzeFace() {
+          const values = getValues();
+          const preset = presets[state.preset];
+          const reference = state.referenceAnalysis;
+
+          let widthRatio = 0.84;
+          let cheekLift = 0.52;
+          let eyeOpen = 0.32;
+          let chinNarrow = 0.5;
+          let lipWidth = 0;
+          let cheekSpan = 0;
+
+          if (state.landmarks) {
+            const faceWidth = Math.abs(state.landmarks[454].x - state.landmarks[234].x);
+            const faceHeight = Math.abs(state.landmarks[152].y - state.landmarks[10].y) || 0.0001;
+            widthRatio = faceWidth / faceHeight;
+            cheekLift = 1 - (state.landmarks[234].y + state.landmarks[454].y) / 2;
+            eyeOpen =
+              ((state.landmarks[145].y - state.landmarks[159].y) +
+                (state.landmarks[374].y - state.landmarks[386].y)) / 2;
+            chinNarrow = Math.abs(state.landmarks[172].x - state.landmarks[397].x) / faceWidth;
+            lipWidth = Math.abs(state.landmarks[291].x - state.landmarks[61].x) * 1000;
+            cheekSpan = Math.abs(state.landmarks[454].x - state.landmarks[234].x) * 1000;
+          }
+
+          let profileLabel = values.asianFit >= 60 ? "亚洲脸型优先" : "通用脸型映射";
+          let faceType = "鹅蛋脸";
+          let faceTypeDesc = "脸部纵横比均衡，适合做大多数动漫角色的基础适配。";
+
+          if (widthRatio > 0.95) {
+            faceType = "田字 / 方圆脸";
+            faceTypeDesc = "横向轮廓更明显，建议通过下颌柔化和高光纵向提亮增强角色精致感。";
+          } else if (widthRatio < 0.78 && chinNarrow < 0.72) {
+            faceType = "甲字 / 瓜子脸";
+            faceTypeDesc = "下庭收束感更强，适合强化眼妆延展和角色尖下巴表达。";
+          } else if (widthRatio < 0.84) {
+            faceType = "由字 / 长脸";
+            faceTypeDesc = "纵向比例更强，建议通过腮红位置和中庭提亮平衡视觉长度。";
+          }
+
+          const contourSummary =
+            state.landmarks ? "外唇轮廓已提取" : "待识别";
+
+          const contourDesc = state.landmarks
+            ? `已提取嘴角、唇峰与外唇轮廓，估算唇宽约 ${lipWidth.toFixed(1)}px，可承载口红与唇峰细节映射。`
+            : "等待外唇轮廓、唇峰与嘴角定位。";
+
+          const styleSummary =
+            reference
+              ? `${reference.eyeShadowText} / ${preset.label}`
+              : preset.label === "角色浓妆"
+              ? "高对比眼妆 / 长眼尾角色风格"
+              : preset.label === "新国风妆造"
+                ? "暖金眼影 / 东方纹样风格"
+                : "自然晕染 / 新手友好风格";
+
+          const styleDesc = state.landmarks
+            ? `已提取左右眼角、上下眼睑与眼裂高度；当前眼妆强度 ${values.eye}，眼裂开合度${eyeOpen > 0.028 ? "较明显" : "偏收束"}，${reference ? `建议向“${reference.keywords.join(" / ")}”靠拢。` : "可继续通过预设风格微调眼影与眼尾方向。"}`
+            : "等待 FaceMesh 提取左右眼角、上下眼睑与眼裂高度。";
+
+          const featureSummary =
+            reference
+              ? `${reference.blushText} / ${reference.specialText}`
+              : values.glow > 62
+                ? "高光强、纹理感偏舞台化"
+                : values.glow > 48
+                  ? "高光均衡、适合镜头表现"
+                  : "高光轻量、强调自然皮感";
+
+          const featureDesc = reference
+            ? `角色图解析得到 ${reference.eyeShadowText}、${reference.blushText}、${reference.lipText} 与 ${reference.specialText}，当前会把这些信息用于妆面建议与预览叠加。`
+            : "等待角色图参数后生成眼影、腮红、口红与特殊细节建议。";
+
+          const adaptSummary =
+            `${state.mode === "camera" ? "实时预览模式" : state.mode === "image" ? "图片模式" : "待机模式"} / ${profileLabel}`;
+
+          const adaptDesc = `当前脸型为 ${faceType}，亚洲适配权重 ${values.asianFit}；建议采用“脸型权重 ${Math.round((1 - Math.abs(widthRatio - 0.84)) * 100)} / 风格权重 ${values.eye}”的方式执行角色融合，${reference ? `目标轮廓建议：${reference.contourTarget}。` : "上传角色图后会进一步细化轮廓方向。"}`
+
+          if (analysisFaceType) analysisFaceType.textContent = faceType;
+          if (analysisFaceTypeDesc) analysisFaceTypeDesc.textContent = faceTypeDesc;
+          if (analysisContour) analysisContour.textContent = contourSummary;
+          if (analysisContourDesc) analysisContourDesc.textContent = contourDesc;
+          if (analysisStyle) analysisStyle.textContent = styleSummary;
+          if (analysisStyleDesc) analysisStyleDesc.textContent = styleDesc;
+          if (analysisFeature) analysisFeature.textContent = featureSummary;
+          if (analysisFeatureDesc) analysisFeatureDesc.textContent = reference ? `${featureDesc} 角色主色板偏向 ${reference.palette.join(" / ")}。` : featureDesc;
+          if (analysisAdapt) analysisAdapt.textContent = adaptSummary;
+          if (analysisAdaptDesc) analysisAdaptDesc.textContent = adaptDesc;
+          if (readoutProfile) readoutProfile.textContent = `${profileLabel} / ${values.asianFit}`;
+
+          setTagList([
+            faceType,
+            preset.label,
+            ...(reference ? [reference.archetype] : []),
+            state.landmarks ? "FaceMesh 已识别" : "启发式轮廓",
+            reference ? reference.blushText : (values.eye > 72 ? "高还原眼妆" : "渐层眼妆"),
+            reference ? reference.specialText : (values.jaw > 64 ? "骨相柔化" : "原生保留"),
+            profileLabel,
+            values.glow > 60 ? "高光增强" : "高光平衡",
+          ]);
+        }
+
+        function renderLoop() {
+          state.frameTick += 1;
+          renderAll();
+          if (state.mode === "camera" && state.stream) {
+            if (video.readyState >= 2 && state.frameTick % 8 === 0) {
+              runFaceMesh(video);
+            }
+            state.animationId = window.requestAnimationFrame(renderLoop);
+          }
+        }
+
+        function stopLoop() {
+          if (state.animationId) {
+            window.cancelAnimationFrame(state.animationId);
+            state.animationId = 0;
+          }
+        }
+
+        function stopCamera() {
+          stopLoop();
+          if (state.stream) {
+            state.stream.getTracks().forEach((track) => track.stop());
+            state.stream = null;
+          }
+          video.srcObject = null;
+          if (state.mode === "camera") {
+            state.mode = image.naturalWidth ? "image" : "placeholder";
+            setStatus(state.mode === "image" ? "已关闭摄像头，保留当前图片预览" : "摄像头已关闭");
+          }
+          analyzeFace();
+          renderAll();
+        }
+
+        async function startCamera() {
+          try {
+            stopCamera();
+            state.stream = await navigator.mediaDevices.getUserMedia({
+              video: {
+                facingMode: "user",
+                width: { ideal: 1280 },
+                height: { ideal: 960 },
+              },
+              audio: false,
+            });
+            video.srcObject = state.stream;
+            await video.play();
+            state.mode = "camera";
+            setStatus("摄像头已开启，正在实时预览");
+            runFaceMesh(video);
+            renderLoop();
+          } catch (error) {
+            console.error(error);
+            setStatus("摄像头调用失败，请改用上传图片模式");
+            renderAll();
+          }
+        }
+
+        function applyPreset(name) {
+          const preset = presets[name];
+          if (!preset) {
+            return;
+          }
+
+          state.preset = name;
+          Object.entries(preset.values).forEach(([key, value]) => {
+            if (ranges[key]) {
+              ranges[key].value = String(value);
+            }
+          });
+          syncOutputs();
+
+          presetButtons.forEach((button) => {
+            button.classList.toggle("is-active", button.dataset.preset === name);
+          });
+
+          if (state.referenceAnalysis) {
+            updateReadoutsFromReference();
+          } else {
+            updateReadoutsForWaitingReference();
+          }
+
+          updateModel();
+          analyzeFace();
+          renderAll();
+        }
+
+        function updateModel() {
+          if (!modelFace) {
+            return;
+          }
+
+          const preset = presets[state.preset];
+          const values = getValues();
+
+          modelFace.style.setProperty("--accent-color", preset.colors.accent);
+          modelFace.style.setProperty("--accent-soft-color", preset.colors.accentSoft);
+          modelFace.style.setProperty("--eye-color", preset.colors.eyeModel);
+          modelFace.style.setProperty("--jaw-scale", (1 - (values.jaw - 50) / 420).toFixed(3));
+          modelFace.style.setProperty("--eye-scale", (0.82 + values.eye / 240).toFixed(3));
+          modelFace.style.setProperty("--blush-pos", `${50 + (values.blush - 50) / 4}%`);
+          modelFace.style.setProperty("--lip-alpha", (0.22 + values.lip / 120).toFixed(3));
+          modelFace.style.setProperty("--glow-strength", (values.glow / 100).toFixed(3));
+        }
+
+        function freezeCurrentFrame() {
+          if (state.mode !== "camera" || video.readyState < 2) {
+            setStatus("请先开启摄像头，再定格画面");
+            return;
+          }
+
+          const snapCanvas = document.createElement("canvas");
+          snapCanvas.width = video.videoWidth;
+          snapCanvas.height = video.videoHeight;
+          snapCanvas.getContext("2d").drawImage(video, 0, 0);
+          image.onload = () => {
+            state.mode = "image";
+            setStatus("已定格当前画面，可继续调参");
+            stopCamera();
+            runFaceMesh(image);
+            analyzeFace();
+            renderAll();
+          };
+          image.src = snapCanvas.toDataURL("image/png");
+        }
+
+        uploadInput.addEventListener("change", (event) => {
+          const [file] = event.target.files || [];
+          if (!file) {
+            return;
+          }
+
+          stopCamera();
+          const url = URL.createObjectURL(file);
+          image.onload = () => {
+            URL.revokeObjectURL(url);
+            state.mode = "image";
+            setStatus("已加载上传图片，可继续试妆");
+            runFaceMesh(image);
+            analyzeFace();
+            renderAll();
+          };
+          image.src = url;
+        });
+
+        animeUploadInput?.addEventListener("change", (event) => {
+          const [file] = event.target.files || [];
+          if (!file) {
+            return;
+          }
+
+          const url = URL.createObjectURL(file);
+          animeReferenceImage.onload = () => {
+            URL.revokeObjectURL(url);
+            state.referenceLoaded = true;
+            state.referenceName = file.name;
+            analyzeReferenceImage(file.name);
+
+            const reference = state.referenceAnalysis;
+            if (reference) {
+              if (reference.archetype.includes("国风")) {
+                applyPreset("guofeng");
+              } else if (reference.archetype.includes("高饱和")) {
+                applyPreset("glam");
+              } else {
+                applyPreset("natural");
+              }
+            } else {
+              updateReadoutsForWaitingReference();
+              analyzeFace();
+              renderAll();
+            }
+          };
+          animeReferenceImage.src = url;
+        });
+
+        Object.entries(ranges).forEach(([key, input]) => {
+          input.addEventListener("input", () => {
+            if (rangeOutputs[key]) {
+              rangeOutputs[key].textContent = input.value;
+            }
+            updateModel();
+            analyzeFace();
+            renderAll();
+          });
+        });
+
+        presetButtons.forEach((button) => {
+          button.addEventListener("click", () => applyPreset(button.dataset.preset));
+        });
+
+        startCameraBtn?.addEventListener("click", startCamera);
+        stopCameraBtn?.addEventListener("click", stopCamera);
+        captureFrameBtn?.addEventListener("click", freezeCurrentFrame);
+
+        modelViewport?.addEventListener("mousemove", (event) => {
+          const bounds = modelViewport.getBoundingClientRect();
+          const dx = (event.clientX - bounds.left) / bounds.width - 0.5;
+          const dy = (event.clientY - bounds.top) / bounds.height - 0.5;
+          modelFigure.style.transform = `rotateY(${dx * 22}deg) rotateX(${dy * -18}deg)`;
+        });
+
+        modelViewport?.addEventListener("mouseleave", () => {
+          modelFigure.style.transform = "rotateY(0deg) rotateX(0deg)";
+        });
+
+        window.addEventListener("resize", () => {
+          renderReferencePreview();
+          renderAll();
+        });
+
+
+        function initGeminiPolish() {
+          const progress = document.querySelector(".scroll-progress");
+          const navLinks = Array.from(document.querySelectorAll(".nav a[href^='#']"));
+          const navSections = navLinks
+            .map((link) => ({ link, section: document.querySelector(link.getAttribute("href")) }))
+            .filter((item) => item.section);
+          const promptText = document.getElementById("geminiPromptText");
+          const prompts = [
+            "上传角色图，我会生成适合真人脸型的妆造方案",
+            "选择风格预设，实时查看眼妆、腮红与唇妆变化",
+            "从项目定位到商业模式，像对话一样快速理解平台价值"
+          ];
+          let promptIndex = 0;
+
+          const updateScrollState = () => {
+            const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+            const ratio = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+            if (progress) {
+              progress.style.width = `${ratio * 100}%`;
+            }
+
+            const active = navSections.find((item) => {
+              const rect = item.section.getBoundingClientRect();
+              return rect.top <= 170 && rect.bottom > 170;
+            });
+            navLinks.forEach((link) => link.classList.toggle("is-active", active?.link === link));
+          };
+
+          if (promptText && prompts.length > 1) {
+            window.setInterval(() => {
+              promptIndex = (promptIndex + 1) % prompts.length;
+              promptText.textContent = prompts[promptIndex];
+            }, 3200);
+          }
+
+          const revealTargets = document.querySelectorAll(
+            ".hero__copy, .hero__side, .section-card, .cta, .module-card, .market-card, .target-card, .tech-card, .business-card, .timeline-card, .risk-card, .progress-card"
+          );
+          revealTargets.forEach((element) => element.classList.add("reveal"));
+
+          if ("IntersectionObserver" in window) {
+            const observer = new IntersectionObserver(
+              (entries) => {
+                entries.forEach((entry) => {
+                  if (entry.isIntersecting) {
+                    entry.target.classList.add("is-visible");
+                    observer.unobserve(entry.target);
+                  }
+                });
+              },
+              { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
+            );
+            revealTargets.forEach((element) => observer.observe(element));
+          } else {
+            revealTargets.forEach((element) => element.classList.add("is-visible"));
+          }
+
+          document
+            .querySelectorAll(".glass, .metric, .panel, .module-card, .market-card, .target-card, .tech-card, .business-card, .timeline-card, .risk-card, .progress-card, .demo-shell, .demo-controls, .analysis-shell")
+            .forEach((card) => {
+              card.addEventListener("pointermove", (event) => {
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty("--mx", `${event.clientX - rect.left}px`);
+                card.style.setProperty("--my", `${event.clientY - rect.top}px`);
+              });
+            });
+
+          window.addEventListener("scroll", updateScrollState, { passive: true });
+          updateScrollState();
+        }
+        initGeminiPolish();
+        syncOutputs();
+        updateReadoutsForWaitingReference();
+        applyPreset("natural");
+        analyzeFace();
+        renderReferencePreview();
+        renderAll();
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+# large / local-only
+.wpp_backup/
+*.zip
+*.mp4
+*.pptx
+*.ppt
+*.rar
+*.lnk
+_*.js
+试妆网站2 - 副本.html
+.DS_Store
+Thumbs.db

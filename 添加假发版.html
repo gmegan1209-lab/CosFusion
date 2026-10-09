@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CosFusion 添加假发版 | 角色假发抠图贴合</title>
+<meta name="description" content="从角色图抠出头发贴图，再按真人五官位置贴到头上。" />
+<style>
+:root{--bg:#080807;--panel:rgba(255,255,255,.045);--line:rgba(240,223,194,.16);--text:#f6f1e8;--muted:rgba(246,241,232,.68);--dim:rgba(246,241,232,.4);--gold:#e6d2ae;--gold2:#c4a574;--ink:#11110f;--ok:#cfe8c8;--shadow:0 24px 70px rgba(0,0,0,.42)}
+*{box-sizing:border-box}html,body{margin:0;background:#080807;color:var(--text)}
+body{font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:radial-gradient(circle at 8% -8%,rgba(230,210,174,.14),transparent 30%),radial-gradient(circle at 92% 8%,rgba(180,120,255,.08),transparent 26%),#080807}
+button,input{font:inherit}button{color:inherit;cursor:pointer}canvas,video,img{display:block;max-width:100%}a{color:inherit;text-decoration:none}
+.caps{letter-spacing:.2em;text-transform:uppercase}
+.top{position:sticky;top:0;z-index:30;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line);background:rgba(8,8,7,.82);backdrop-filter:blur(16px)}
+.brand{display:flex;gap:10px;align-items:center}.mark{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:11px}
+.brand b{display:block;font-size:13px}.brand span{display:block;color:var(--muted);font-size:10px}
+.nav{display:flex;gap:16px}.nav a{font-size:11px;color:var(--muted)}
+.btn{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:999px;padding:9px 14px}
+.btn:hover{background:rgba(230,210,174,.1)}.btn-gold{background:var(--gold);color:var(--ink);border-color:transparent;font-weight:650}
+.wrap{width:min(1480px,calc(100vw - 24px));margin:16px auto 36px;display:grid;grid-template-columns:300px minmax(0,1fr) 340px;gap:14px}
+.card{border:1px solid var(--line);background:var(--panel);border-radius:24px;box-shadow:var(--shadow);backdrop-filter:blur(14px)}
+.side{padding:16px;display:flex;flex-direction:column;gap:12px;max-height:calc(100vh - 92px);overflow:auto}
+.kicker{color:var(--gold2);font-size:10px}
+h1,h2,h3{margin:0}h1{font-family:"Palatino Linotype","Songti SC",serif;font-size:28px;font-weight:500;line-height:1.2}
+h2{font-size:15px}h3{font-size:13px}.lead{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
+.drop{border:1px dashed rgba(230,210,174,.32);border-radius:18px;padding:14px;text-align:center;background:rgba(255,255,255,.03)}
+.drop.hot{border-color:var(--gold);background:rgba(230,210,174,.08)}
+.drop input{display:none}.drop p{margin:8px 0 0;color:var(--dim);font-size:11px}
+#charCanvas{width:100%;height:340px;border-radius:16px;background:#12110f;border:1px solid var(--line);cursor:crosshair;touch-action:none}
+.mask-tools{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;justify-content:center}
+.mask-tools .btn{padding:7px 10px;font-size:11px}
+.mask-tools .btn.on{background:var(--gold);color:var(--ink);border-color:transparent}
+.mask-tools .tiny{width:100%;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px}
+.mask-tools .tiny input{flex:1}
+.tags{display:flex;flex-wrap:wrap;gap:6px}.tag{padding:5px 8px;border-radius:999px;border:1px solid var(--line);font-size:11px;color:var(--muted)}
+.layer{padding:10px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.layer-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.sw{display:flex;gap:5px;flex-wrap:wrap}.dot{width:16px;height:16px;border-radius:50%;border:1px solid rgba(255,255,255,.2)}
+.meta{color:var(--dim);font-size:11px;line-height:1.55}
+.stage-card{padding:12px}
+.stage{position:relative;overflow:hidden;border-radius:20px;aspect-ratio:4/5;border:1px solid var(--line);background:linear-gradient(180deg,#171613,#0c0c0a)}
+#view,#src,#mk{position:absolute;inset:0;width:100%;height:100%}#src,#mk{opacity:0;pointer-events:none}
+.stage.can-drag{cursor:grab}.stage.dragging{cursor:grabbing}
+.drag-hint{position:absolute;left:12px;bottom:86px;z-index:4;padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:rgba(0,0,0,.48);backdrop-filter:blur(10px);font-size:11px;color:var(--gold);pointer-events:none}
+#cam{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none}
+.hud{position:absolute;z-index:4;padding:8px 11px;border-radius:999px;border:1px solid var(--line);background:rgba(0,0,0,.48);backdrop-filter:blur(10px);font-size:12px}
+.st{top:12px;left:12px}.en{top:12px;right:12px;color:var(--gold)}
+.split{position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(transparent,var(--gold),transparent);cursor:ew-resize;z-index:5;display:none}
+.split.on{display:block}.knob{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;background:var(--gold);color:var(--ink);display:grid;place-items:center;font-weight:700}
+.cap{position:absolute;left:12px;right:12px;bottom:12px;z-index:4;padding:12px;border-radius:16px;border:1px solid var(--line);background:rgba(0,0,0,.45);backdrop-filter:blur(10px)}
+.cap b{display:block;font-size:14px}.cap span{display:block;margin-top:4px;color:var(--muted);font-size:12px;line-height:1.55}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.upload{display:inline-flex;align-items:center;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);cursor:pointer}
+.upload input{display:none}
+.row{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}
+.slider{width:100%;accent-color:var(--gold)}
+.toggle{width:36px;height:20px;border:0;border-radius:999px;background:#2b2a27;position:relative}
+.toggle.on{background:var(--gold)}.toggle:after{content:"";position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.15s}
+.toggle.on:after{left:19px}
+.stat{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat div{padding:10px;border-radius:14px;border:1px solid var(--line)}
+.stat i{display:block;font-style:normal;font-size:10px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase}
+.stat b{display:block;margin-top:5px;font-size:13px}
+.note{color:var(--dim);font-size:11px;line-height:1.65}
+.steps{display:flex;gap:6px;margin-bottom:4px}
+.step{flex:1;padding:8px;border-radius:12px;border:1px solid var(--line);font-size:11px;color:var(--dim);text-align:center}
+.step.on{color:var(--ink);background:var(--gold);border-color:transparent}
+.models{display:flex;gap:6px}.model{flex:1;border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:12px;padding:8px;font-size:11px;text-align:left}
+.model.on{border-color:var(--gold)}
+@media(max-width:1100px){.wrap{grid-template-columns:1fr}.side{max-height:none}.nav{display:none}h1{font-size:24px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index - v8i风格美化版.html">
+    <div class="mark caps">CF</div>
+    <div><b>COSFUSION</b><span class="caps">Wig Cutout</span></div>
+  </a>
+  <nav class="nav caps">
+    <a href="index - v8i风格美化版.html">官网</a>
+    <a href="virtual-tryon.html">试妆工坊 1</a>
+    <a href="试妆网站2.html">试妆网站2</a>
+    <a href="添加假发版.html">添加假发版</a>
+    <a href="new design web.html">New Design</a>
+  </nav>
+  <div style="display:flex;gap:8px">
+    <button class="btn" id="privacyBtn" type="button">本地解析</button>
+    <button class="btn btn-gold" id="saveBtn" type="button">保存迁移结果</button>
+  </div>
+</header>
+<main class="wrap">
+  <aside class="card side">
+    <div class="steps">
+      <div class="step on" id="s1">1 解析角色</div>
+      <div class="step" id="s2">2 采集人脸</div>
+      <div class="step" id="s3">3 妆+假发贴图</div>
+    </div>
+    <div class="kicker caps">Character parse</div>
+    <h2>自己涂出角色头发，再贴到真人脸上。</h2>
+    <p class="lead">自动抠图不稳定，所以改成你自己涂。粉色区域就是假发；涂完后按真人五官贴上去。</p>
+    <div class="drop" id="charDrop">
+      <canvas id="charCanvas" width="480" height="600"></canvas>
+      <div class="mask-tools">
+        <button class="btn on" id="hairBrush" type="button">画头发</button>
+        <button class="btn" id="hairErase" type="button">擦除</button>
+        <button class="btn" id="hairFill" type="button">点选同类色</button>
+        <button class="btn" id="hairClear" type="button">清空</button>
+        <div class="tiny"><span>笔刷</span><input id="hairBrushSize" type="range" min="8" max="72" value="28"><b id="vBrush">28</b></div>
+      </div>
+      <label class="btn btn-gold" style="margin-top:10px;display:inline-flex">上传动漫人物图<input id="charInput" type="file" accept="image/*"></label>
+      <p>粉色是选中的头发。请用画笔涂，或点「点选同类色」再点头发。涂完会立刻贴到右侧脸上。</p>
+    </div>
+    <div class="models">
+      <button class="model" id="p1" type="button">参考图 1</button>
+      <button class="model" id="p2" type="button">参考图 2</button>
+    </div>
+    <div id="charTags" class="tags"><span class="tag">等待角色图</span></div>
+    <div id="layers"></div>
+  </aside>
+
+  <section class="card stage-card">
+    <div class="stage" id="stage">
+      <canvas id="src" width="960" height="1200"></canvas>
+      <canvas id="mk" width="960" height="1200"></canvas>
+      <canvas id="view" width="960" height="1200"></canvas>
+      <video id="cam" autoplay playsinline muted></video>
+      <div class="hud st" id="status">请先上传动漫人物图</div>
+      <div class="hud en" id="engine">引擎待命</div>
+      <div class="split" id="split"><div class="knob">⇄</div></div>
+      <div class="drag-hint" id="dragHint">在画面上拖动假发，对准额头</div>
+      <div class="cap">
+        <b id="title">假发抠图试戴</b>
+        <span id="desc">先在左侧涂出头发，再开镜头或上传自拍。可直接在画面上拖动假发。</span>
+      </div>
+    </div>
+    <div class="tools">
+      <button class="btn btn-gold" id="camBtn" type="button">开启镜头</button>
+      <label class="upload">上传真人自拍<input id="faceInput" type="file" accept="image/*"></label>
+      <button class="btn" id="shotBtn" type="button">定格</button>
+      <button class="btn" id="cmpBtn" type="button">前后对比</button>
+      <button class="btn" id="stopBtn" type="button">关闭镜头</button>
+    </div>
+  </section>
+
+  <aside class="card side">
+    <div class="kicker caps">Face match</div>
+    <h2>五官适配与浓度</h2>
+    <p class="lead">迁移时按真人脸型微调腮红落点、眼尾长度和唇色饱和，避免角色妆直接盖成面具。</p>
+    <div class="stat">
+      <div><i>Face</i><b id="fFace">待采集</b></div>
+      <div><i>Eyes</i><b id="fEyes">待采集</b></div>
+      <div><i>Lips</i><b id="fLips">待采集</b></div>
+      <div><i>Plan</i><b id="fPlan">待解析</b></div>
+    </div>
+    <div class="models" id="modelRow">
+      <button class="model on" data-m="ivory" type="button">Ivory 底模</button>
+      <button class="model" data-m="beige" type="button">Beige 底模</button>
+      <button class="model" data-m="olive" type="button">Olive 底模</button>
+    </div>
+    <div class="row"><span>整体迁移强度</span><b id="vAll">72%</b></div>
+    <input class="slider" id="all" type="range" min="20" max="100" value="72">
+    <div class="row"><span>眼妆</span><b id="vEye">80%</b></div>
+    <input class="slider" id="eye" type="range" min="0" max="100" value="80">
+    <div class="row"><span>唇妆</span><b id="vLip">78%</b></div>
+    <input class="slider" id="lip" type="range" min="0" max="100" value="78">
+    <div class="row"><span>颊彩 / 高光</span><b id="vCheek">64%</b></div>
+    <input class="slider" id="cheek" type="range" min="0" max="100" value="64">
+    <div class="row"><span>边缘柔化</span><b id="vSoft">70%</b></div>
+    <input class="slider" id="soft" type="range" min="20" max="100" value="70">
+    <div class="kicker caps">Wig Cutout</div>
+    <div class="row"><span>贴图浓度</span><b id="vDen">88%</b></div>
+    <input class="slider" id="wigDen" type="range" min="20" max="100" value="88">
+    <div class="row"><span>覆盖缩放</span><b id="vLen">100%</b></div>
+    <input class="slider" id="wigLen" type="range" min="20" max="400" value="100">
+    <div class="row"><span>刘海保留</span><b id="vBang">45%</b></div>
+    <input class="slider" id="wigBang" type="range" min="0" max="100" value="45">
+    <div class="row"><span>左右宽度</span><b id="vVol">100%</b></div>
+    <input class="slider" id="wigVol" type="range" min="30" max="300" value="100">
+    <p class="note">假发来自角色图抠图，直接贴到人脸上。浓度、缩放、刘海挖空和左右宽度可调。</p>
+    <div class="row"><span>显示假发贴图</span></div>
+    <button class="toggle on" id="wigToggle" type="button"></button>
+    <button class="btn" id="wigReset" type="button" style="margin-top:8px">复位假发位置</button>
+    <p class="note">自动贴合后若仍错位，直接在中间画面上按住拖动假发。缩放仍用上面的滑杆。</p>
+    <p class="note">眼妆与唇妆会提饱和，再按柔化半径做高斯边缘，所以颜色够明显，边缘不会像贴纸。面部数据仅在本地计算。</p>
+  </aside>
+</main>
+<script src="hair2d.js"></script>
+<script>
+
+
+
+﻿const view = document.getElementById("view");
+const src = document.getElementById("src");
+const mk = document.getElementById("mk");
+const vctx = view.getContext("2d", { willReadFrequently: true });
+const sctx = src.getContext("2d", { willReadFrequently: true });
+const mctx = mk.getContext("2d", { willReadFrequently: true });
+const video = document.getElementById("cam");
+const charCanvas = document.getElementById("charCanvas");
+const cctx = charCanvas.getContext("2d", { willReadFrequently: true });
+const split = document.getElementById("split");
+const stage = document.getElementById("stage");
+const FACE_OVAL = [10,338,297,332,284,251,389,356,454,323,361,288,397,365,379,378,400,377,152,148,176,149,150,136,172,58,132,93,234,127,162,21,54,103,67,109];
+const LIPS = [61,185,40,39,37,0,267,269,270,409,291,375,321,405,314,17,84,181,91,146];
+const LEFT_EYE = [33,7,163,144,145,153,154,155,133,173,157,158,159,160,161,246];
+const RIGHT_EYE = [263,249,390,373,374,380,381,382,362,398,384,385,386,387,388,466];
+const LEFT_BROW = [70,63,105,66,107];
+const RIGHT_BROW = [300,293,334,296,336];
+const LEFT_LINER = [33,246,161,160,159,158,157,173,133];
+const RIGHT_LINER = [263,466,388,387,386,385,384,398,362];
+
+const MODELS = {
+  ivory: { skin:"#efd2bf", blush:"#e6a8b0", lip:"#c8888c", hair:"#3b2a22", eye:"#4a372e" },
+  beige: { skin:"#e0b394", blush:"#d4898a", lip:"#b26466", hair:"#241812", eye:"#3a2a22" },
+  olive: { skin:"#c48962", blush:"#c06c62", lip:"#9a4a46", hair:"#140e0b", eye:"#2a1c14" }
+};
+
+const state = {
+  meshReady: false, smoothLm: null,
+  mode: "model", model: "ivory", stream: null, image: null, char: null,
+  analysis: null, landmarks: null, compare: false, compareX: 0.5,
+  all: 0.72, eye: 0.80, lip: 0.78, cheek: 0.64, soft: 0.70,
+  faceMesh: null, busy: false, err: false, promise: null,
+  skin: { r: 220, g: 176, b: 150 },
+  features: { face: "待采集", eyes: "待采集", lips: "待采集" },
+  tick: 0, loopId: 0, toggles: { eye: true, lip: true, blush: true, liner: true, glow: true, iris: true, base: true, wig: true },
+  wig: { density: 0.88, length: 1.00, bangs: 0.45, volume: 1.00, ox: 0, oy: 0 },
+  hairSession: null
+};
+
+function hexToRgb(hex) {
+  const h = String(hex).replace("#","");
+  return { r: parseInt(h.slice(0,2),16), g: parseInt(h.slice(2,4),16), b: parseInt(h.slice(4,6),16) };
+}
+function rgbToHex(r,g,b){ return "#" + [r,g,b].map(v => Math.max(0,Math.min(255, v|0)).toString(16).padStart(2,"0")).join(""); }
+function rgba(c,a){ const x = typeof c === "string" ? hexToRgb(c) : c; return "rgba("+x.r+","+x.g+","+x.b+","+a+")"; }
+function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+function mix(a,b,t){ return { r: a.r+(b.r-a.r)*t, g: a.g+(b.g-a.g)*t, b: a.b+(b.b-a.b)*t }; }
+function rgbToHsl(r,g,b){
+  r/=255;g/=255;b/=255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b), l=(max+min)/2;
+  if(max===min) return {h:0,s:0,l};
+  const d=max-min, s=l>.5?d/(2-max-min):d/(max+min);
+  let h=0;
+  if(max===r) h=((g-b)/d+(g<b?6:0));
+  else if(max===g) h=(b-r)/d+2;
+  else h=(r-g)/d+4;
+  return {h:h/6,s,l};
+}
+function hslToRgb(h,s,l){
+  const hue2rgb=(p,q,t)=>{ if(t<0)t+=1; if(t>1)t-=1; if(t<1/6)return p+(q-p)*6*t; if(t<1/2)return q; if(t<2/3)return p+(q-p)*(2/3-t)*6; return p; };
+  let r,g,b;
+  if(s===0) r=g=b=l;
+  else { const q=l<.5?l*(1+s):l+s-l*s, p=2*l-q; r=hue2rgb(p,q,h+1/3); g=hue2rgb(p,q,h); b=hue2rgb(p,q,h-1/3); }
+  return { r: Math.round(r*255), g: Math.round(g*255), b: Math.round(b*255) };
+}
+function punch(rgb, sat=1.28, light=-0.04){
+  const hsl = rgbToHsl(rgb.r,rgb.g,rgb.b);
+  const out = hslToRgb(hsl.h, clamp(hsl.s*sat,0,1), clamp(hsl.l+light,0.08,0.88));
+  return out;
+}
+function avg(list){
+  if(!list.length) return {r:180,g:120,b:120};
+  const s=list.reduce((a,p)=>({r:a.r+p.r,g:a.g+p.g,b:a.b+p.b}),{r:0,g:0,b:0});
+  return { r:s.r/list.length, g:s.g/list.length, b:s.b/list.length };
+}
+function pt(lm,i,w,h){ const p=lm[i]||{x:.5,y:.5}; return {x:p.x*w,y:p.y*h}; }
+function dist(a,b){ return Math.hypot(a.x-b.x,a.y-b.y); }
+function path(ctx,lm,idx,w,h){
+  ctx.beginPath();
+  idx.forEach((i,n)=>{ const p=pt(lm,i,w,h); n?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y); });
+  ctx.closePath();
+}
+function setStatus(t){ document.getElementById("status").textContent=t; }
+function setEngine(t){ document.getElementById("engine").textContent=t; }
+function setStep(n){
+  ["s1","s2","s3"].forEach((id,i)=>document.getElementById(id).classList.toggle("on", i<n));
+}
+
+function layerCanvas(w,h){
+  const c=document.createElement("canvas"); c.width=w; c.height=h;
+  return { c, ctx:c.getContext("2d") };
+}
+
+
+﻿function sampleImage(img, size){
+  const c=document.createElement("canvas"); c.width=size; c.height=size;
+  const cx=c.getContext("2d",{willReadFrequently:true});
+  cx.drawImage(img,0,0,size,size);
+  return { c, cx, data: cx.getImageData(0,0,size,size).data, size };
+}
+function pix(data,size,x,y){
+  const i=((y*size+x)|0)*4; return { r:data[i], g:data[i+1], b:data[i+2], a:data[i+3] };
+}
+function isSkin(p){
+  const hsl=rgbToHsl(p.r,p.g,p.b);
+  const h=hsl.h*360;
+  const peach = (h<50 || h>340) && hsl.s>0.08 && hsl.s<0.78 && hsl.l>0.28 && hsl.l<0.96;
+  const anime = p.r>170 && p.g>120 && p.b>100 && p.r>p.b && hsl.l>0.45;
+  return peach || anime;
+}
+function isLipish(p){
+  const hsl=rgbToHsl(p.r,p.g,p.b);
+  const h=hsl.h*360;
+  return ((h<28 || h>330) && hsl.s>0.28 && hsl.l>0.18 && hsl.l<0.72 && p.r>p.g+8);
+}
+function isShadowish(p){
+  const hsl=rgbToHsl(p.r,p.g,p.b);
+  return hsl.s>0.22 && hsl.l>0.12 && hsl.l<0.78 && !isSkin(p);
+}
+
+function analyzeCharacter(img){
+  const S=220;
+  const { data, size } = sampleImage(img, S);
+  const skinPts=[], all=[], satPts=[];
+  for(let y=0;y<S;y++){
+    for(let x=0;x<S;x++){
+      const p=pix(data,S,x,y); if(p.a<40) continue;
+      const hsl=rgbToHsl(p.r,p.g,p.b);
+      all.push({x,y,...p,hsl});
+      if(isSkin(p)) skinPts.push({x,y,...p,hsl});
+      if(hsl.s>0.28 && hsl.l>0.12 && hsl.l<0.85) satPts.push({x,y,...p,hsl});
+    }
+  }
+  let minX=S,minY=S,maxX=0,maxY=0;
+  const use = skinPts.length>80 ? skinPts : all.filter(p=>p.x>S*0.18 && p.x<S*0.82 && p.y>S*0.08 && p.y<S*0.92);
+  use.forEach(p=>{ minX=Math.min(minX,p.x); maxX=Math.max(maxX,p.x); minY=Math.min(minY,p.y); maxY=Math.max(maxY,p.y); });
+  if(maxX<=minX){ minX=S*0.2; maxX=S*0.8; minY=S*0.1; maxY=S*0.85; }
+  const fw=maxX-minX, fh=maxY-minY;
+  const face={ x:minX, y:minY, w:fw, h:fh };
+  const inFace=(p,x0,x1,y0,y1)=> p.x>=minX+fw*x0 && p.x<=minX+fw*x1 && p.y>=minY+fh*y0 && p.y<=minY+fh*y1;
+
+  const forehead=use.filter(p=>inFace(p,.25,.75,.02,.22));
+  const leftCheek=use.filter(p=>inFace(p,.02,.32,.42,.68));
+  const rightCheek=use.filter(p=>inFace(p,.68,.98,.42,.68));
+  const leftEyeBand=all.filter(p=>inFace(p,.05,.48,.22,.48));
+  const rightEyeBand=all.filter(p=>inFace(p,.52,.95,.22,.48));
+  const mouthBand=all.filter(p=>inFace(p,.28,.72,.62,.88));
+  const hairBand=all.filter(p=>p.y<minY+fh*0.12 || (p.y<minY+fh*0.28 && (p.x<minX+fw*0.16 || p.x>minX+fw*0.84)));
+
+  const skin = avg(use.filter(isSkin).length ? use.filter(isSkin) : use);
+  const hairC = avg(hairBand.filter(p=>rgbToHsl(p.r,p.g,p.b).l<0.45).length ? hairBand.filter(p=>rgbToHsl(p.r,p.g,p.b).l<0.45) : hairBand);
+
+  function pickShadow(band){
+    const cands=band.filter(p=>{
+      const h=p.hsl; return h.s>0.18 && h.l>0.12 && h.l<0.72 && (p.r+p.g+p.b)<620 && !isSkin(p);
+    });
+    const lid=avg(cands.length?cands:band.filter(p=>p.hsl.s>0.15));
+    const dark=avg(cands.filter(p=>p.hsl.l<0.38).length?cands.filter(p=>p.hsl.l<0.38):cands);
+    const inner=avg(cands.filter(p=>p.hsl.l>0.45).length?cands.filter(p=>p.hsl.l>0.45):cands);
+    const irisCands=band.filter(p=>p.hsl.s>0.35 && p.hsl.l>0.18 && p.hsl.l<0.65);
+    const iris=avg(irisCands.length?irisCands:cands);
+    const linerCands=band.filter(p=>p.hsl.l<0.22);
+    const liner=avg(linerCands.length?linerCands:[{r:28,g:18,b:18}]);
+    return { lid:punch(lid,1.35,-0.02), crease:punch(dark,1.25,-0.08), inner:punch(inner,1.15,0.04), iris:punch(iris,1.4,0), liner:punch(liner,1.05,-0.1) };
+  }
+  const L=pickShadow(leftEyeBand), R=pickShadow(rightEyeBand);
+  const eye = {
+    lid: mix(L.lid,R.lid,.5), crease: mix(L.crease,R.crease,.5),
+    inner: mix(L.inner,R.inner,.5), iris: mix(L.iris,R.iris,.5), liner: mix(L.liner,R.liner,.5)
+  };
+
+  const lipPix=mouthBand.filter(isLipish);
+  const lipColor=punch(avg(lipPix.length>12?lipPix:mouthBand.filter(p=>p.hsl.s>0.2)), 1.38, -0.03);
+  const lipBright=mouthBand.filter(p=>p.hsl.l>0.72).length / Math.max(1,mouthBand.length);
+  const finish = lipBright>0.08 ? "gloss" : (rgbToHsl(lipColor.r,lipColor.g,lipColor.b).s>0.55 ? "satin" : "matte");
+
+  const cheekPix=[...leftCheek,...rightCheek].filter(p=>{
+    const h=p.hsl.h*360; return ((h<30||h>330)&&p.hsl.s>0.18&&p.hsl.l>0.4) || (p.r>p.g+12 && p.r>140);
+  });
+  const blush=punch(cheekPix.length>10?avg(cheekPix):mix(skin,lipColor,.4), 1.22, 0.02);
+
+  const blushY = [...leftCheek,...rightCheek].length ? ([...leftCheek,...rightCheek].reduce((a,p)=>a+p.y,0)/[...leftCheek,...rightCheek].length - minY)/fh : 0.55;
+
+  const glowPix=forehead.filter(p=>p.hsl.l>0.78);
+  const glow = glowPix.length/Math.max(1,forehead.length);
+
+  const linerDark = (leftEyeBand.filter(p=>p.hsl.l<0.16).length + rightEyeBand.filter(p=>p.hsl.l<0.16).length) / Math.max(1,leftEyeBand.length+rightEyeBand.length);
+  const satEye = (leftEyeBand.filter(p=>p.hsl.s>0.4).length + rightEyeBand.filter(p=>p.hsl.s>0.4).length) / Math.max(1,leftEyeBand.length+rightEyeBand.length);
+  let eyeStyle="wash";
+  if(linerDark>0.08 && satEye<0.18) eyeStyle="smoky";
+  else if(linerDark>0.06) eyeStyle="wing";
+  else if(rgbToHsl(eye.inner.r,eye.inner.g,eye.inner.b).l>0.55) eyeStyle="cut";
+
+  const irisH=rgbToHsl(eye.iris.r,eye.iris.g,eye.iris.b);
+  const coloredIris = irisH.s>0.38 && !(irisH.h*360>15 && irisH.h*360<55);
+
+  const palSrc=[eye.lid, eye.crease, blush, lipColor, eye.iris, hairC].map(c=>rgbToHex(c.r,c.g,c.b));
+  const hslLip=rgbToHsl(lipColor.r,lipColor.g,lipColor.b);
+  const hslEye=rgbToHsl(eye.lid.r,eye.lid.g,eye.lid.b);
+  const hslHair=rgbToHsl(hairC.r,hairC.g,hairC.b);
+
+  let archetype="清透角色妆";
+  let keywords=["柔光","渐层眼妆","自然唇"];
+  if((hslLip.h<20||hslLip.h>0.92) && hslLip.s>0.48 && hslEye.s>0.4) { archetype="高饱和角色妆"; keywords=["高对比","舞台眼尾","浓唇"]; }
+  if((hslEye.h>0.05 && hslEye.h<0.14 && hslEye.s>0.4) || (hslLip.h<0.05 && hslLip.s>0.45 && hslHair.l<0.28)) { archetype="新国风妆造"; keywords=["暖金","朱红唇","东方眼尾"]; }
+  if(coloredIris && (irisH.h*360<20 || irisH.h*360>350) && linerDark>0.05) { archetype="狐妖 / 赤瞳妆"; keywords=["赤金眼影","上挑眼尾","酒渍唇"]; }
+  if(irisH.h*360>180 && irisH.h*360<265 && irisH.s>0.3) { archetype="冰系精灵妆"; keywords=["冷调眼","珠光","冰粉唇"]; }
+  if(hslHair.l<0.18 && linerDark>0.1 && hslLip.l<0.32) { archetype="暗黑哥特妆"; keywords=["烟熏","哑光唇","高对比"]; }
+  if(hslLip.s>0.4 && eyeStyle==="cut") { archetype="偶像少女妆"; keywords=["卧蚕","蜜桃颊","水光唇"]; }
+
+  const specials=[];
+  if(coloredIris) specials.push("虹膜染色 "+rgbToHex(eye.iris.r,eye.iris.g,eye.iris.b));
+  if(linerDark>0.07) specials.push("强调眼线");
+  if(finish==="gloss") specials.push("水光唇膜");
+  if(glow>0.12) specials.push("高位高光");
+  if(satEye>0.22) specials.push("高饱和眼影盘");
+  if(!specials.length) specials.push("基础角色妆层");
+
+  const out = {
+    palette: palSrc, skin, hair: hairC, face,
+    eye: { ...eye, style: eyeStyle, intensity: clamp(0.45+satEye*0.9+linerDark,0.4,1), coloredIris },
+    lip: { color: lipColor, finish, intensity: clamp(0.5+hslLip.s*0.5,0.45,1) },
+    blush: { color: blush, y: clamp(blushY,0.42,0.7), intensity: clamp(0.35+rgbToHsl(blush.r,blush.g,blush.b).s,0.3,0.9) },
+    glow: { intensity: clamp(0.25+glow,0.2,0.8), color: mix(skin,{r:255,g:236,b:214},0.5) },
+    archetype, keywords, specials, finish,
+    wig: null
+  };
+  out.wig = null;
+  return out;
+}
+
+function commitHairMask(){
+  if (!state.hairSession || !state.analysis) return;
+  state.analysis.wig = state.hairSession.buildCutout();
+  if (state.analysis.wig && state.analysis.wig.color) state.analysis.hair = state.analysis.wig.color;
+}
+
+function drawCharPreview(){
+  if (state.hairSession) {
+    state.hairSession.paintPreview(charCanvas, cctx);
+    return;
+  }
+  const img = state.char;
+  const w=charCanvas.width, h=charCanvas.height;
+  cctx.fillStyle="#12110f"; cctx.fillRect(0,0,w,h);
+  if (!img) return;
+  const scale=Math.min(w/img.width, h/img.height);
+  const dw=img.width*scale, dh=img.height*scale;
+  cctx.drawImage(img,(w-dw)/2,(h-dh)/2,dw,dh);
+}
+
+function renderLayers(){
+  const box=document.getElementById("layers");
+  const a=state.analysis;
+  const tags=document.getElementById("charTags");
+  if(!a){ box.innerHTML=""; tags.innerHTML='<span class="tag">等待角色图</span>'; return; }
+  tags.innerHTML = [a.archetype, a.wig && a.wig.name, ...a.keywords, ...a.specials].filter(Boolean).map(t=>'<span class="tag">'+t+"</span>").join("");
+  const wigCols = a.wig ? [a.wig.color, a.wig.highlight] : [a.hair];
+  const rows=[
+    ["眼妆层", a.eye.style==="wing"?"眼尾延伸":a.eye.style==="smoky"?"烟熏晕染":a.eye.style==="cut"?"卧蚕提亮":"睑上渐层", [a.eye.inner,a.eye.lid,a.eye.crease], "eye"],
+    ["眼线层", "贴合上睫毛线，角色线稿越重越明显", [a.eye.liner], "liner"],
+    ["颊彩层", "按角色苹果肌高度迁移，落点随真人脸型微调", [a.blush.color], "blush"],
+    ["唇妆层", a.lip.finish==="gloss"?"水光质地，保留唇纹":a.lip.finish==="matte"?"雾面叠色":"缎光唇釉", [a.lip.color], "lip"],
+    ["虹膜/高光", a.eye.coloredIris?"迁移角色瞳色，并加鼻梁与眉心高光":"仅提亮高光，不强制改瞳", [a.eye.iris, a.glow.color], "glow"],
+    ["假发贴图层", a.wig && a.wig.coverage > 0.004 ? (a.wig.name+" · 已涂选 "+Math.round(a.wig.coverage*100)+"%") : "请在左侧涂出头发，或点选同类色", wigCols, "wig"]
+  ];
+  box.innerHTML = rows.map(([title,desc,cols,key])=>{
+    const dots=cols.map(c=>'<span class="dot" style="background:'+rgbToHex(c.r,c.g,c.b)+'"></span>').join("");
+    const on=state.toggles[key]!==false;
+    return '<div class="layer"><div class="layer-head"><div><h3>'+title+'</h3></div><button class="toggle'+(on?" on":"")+'" data-k="'+key+'" type="button"></button></div><div class="sw">'+dots+'</div><div class="meta">'+desc+"</div></div>";
+  }).join("");
+  box.querySelectorAll(".toggle").forEach(btn=>{
+    btn.onclick=()=>{
+      state.toggles[btn.dataset.k]=!state.toggles[btn.dataset.k];
+      if (btn.dataset.k==="wig") {
+        const t=document.getElementById("wigToggle");
+        if (t) t.classList.toggle("on", state.toggles.wig!==false);
+      }
+      renderLayers(); renderAll();
+    };
+  });
+  document.getElementById("title").textContent = a.archetype;
+  document.getElementById("desc").textContent = "妆面已拆解。请在左侧涂出头发后再采集人脸。" + a.keywords.join("、") + "。";
+  document.getElementById("fPlan").textContent = a.archetype;
+}
+
+
+﻿function heuristicLandmarks(){
+  const pts=Array.from({length:478},()=>({x:.5,y:.5,z:0}));
+  const oval=(t,sx=.32,sy=.40,cx=.5,cy=.48)=>({x:cx+Math.cos(t)*sx,y:cy+Math.sin(t)*sy,z:0});
+  FACE_OVAL.forEach((id,i)=>{ pts[id]=oval(-Math.PI/2+i/FACE_OVAL.length*Math.PI*2); });
+  pts[10]={x:.5,y:.22}; pts[152]={x:.5,y:.89}; pts[1]={x:.5,y:.54};
+  pts[234]={x:.19,y:.50}; pts[454]={x:.81,y:.50};
+  pts[93]={x:.23,y:.62}; pts[323]={x:.77,y:.62};
+  pts[172]={x:.31,y:.79}; pts[397]={x:.69,y:.79};
+  function eye(cx,cy,sign){
+    const map=sign<0?{33:[cx-.07,cy],7:[cx-.06,cy+.016],163:[cx-.045,cy+.026],144:[cx-.025,cy+.03],145:[cx,cy+.032],153:[cx+.025,cy+.03],154:[cx+.045,cy+.022],155:[cx+.06,cy+.01],133:[cx+.07,cy],173:[cx+.06,cy-.01],157:[cx+.045,cy-.02],158:[cx+.025,cy-.026],159:[cx,cy-.028],160:[cx-.025,cy-.026],161:[cx-.045,cy-.02],246:[cx-.06,cy-.01]}:{263:[cx+.07,cy],249:[cx+.06,cy+.016],390:[cx+.045,cy+.026],373:[cx+.025,cy+.03],374:[cx,cy+.032],380:[cx-.025,cy+.03],381:[cx-.045,cy+.022],382:[cx-.06,cy+.01],362:[cx-.07,cy],398:[cx-.06,cy-.01],384:[cx-.045,cy-.02],385:[cx-.025,cy-.026],386:[cx,cy-.028],387:[cx+.025,cy-.026],388:[cx+.045,cy-.02],466:[cx+.06,cy-.01]};
+    Object.entries(map).forEach(([k,v])=>{ pts[k]={x:v[0],y:v[1]}; });
+  }
+  eye(.355,.415,-1); eye(.645,.415,1);
+  LEFT_BROW.forEach((id,i)=>{ pts[id]={x:.27+i*.022,y:.325-Math.sin(i/3)*.012}; });
+  RIGHT_BROW.forEach((id,i)=>{ pts[id]={x:.73-i*.022,y:.325-Math.sin(i/3)*.012}; });
+  const upper=[61,185,40,39,37,0,267,269,270,409,291];
+  upper.forEach((id,i)=>{ const t=i/(upper.length-1); pts[id]={x:.385+t*.23,y:.695-Math.sin(t*Math.PI)*.016-(t>.35&&t<.65?.01:0)}; });
+  [146,91,181,84,17,314,405,321,375].forEach((id,i,arr)=>{ const t=(i+1)/(arr.length+1); pts[id]={x:.385+t*.23,y:.72+Math.sin(t*Math.PI)*.028}; });
+  pts[50]={x:.33,y:.57}; pts[280]={x:.67,y:.57};
+  pts[101]={x:.38,y:.54}; pts[118]={x:.30,y:.50}; pts[117]={x:.27,y:.52}; pts[116]={x:.24,y:.54};
+  pts[123]={x:.26,y:.60}; pts[147]={x:.28,y:.64}; pts[187]={x:.31,y:.63}; pts[205]={x:.34,y:.61};
+  pts[330]={x:.62,y:.54}; pts[347]={x:.70,y:.50}; pts[346]={x:.73,y:.52}; pts[345]={x:.76,y:.54};
+  pts[352]={x:.74,y:.60}; pts[376]={x:.72,y:.64}; pts[411]={x:.69,y:.63}; pts[425]={x:.66,y:.61};
+  pts[6]={x:.5,y:.40}; pts[197]={x:.5,y:.44}; pts[195]={x:.5,y:.48}; pts[5]={x:.5,y:.50}; pts[4]={x:.5,y:.52}; pts[19]={x:.5,y:.58};
+  for(let i=0;i<5;i++){ const ang=-Math.PI/2+i/5*Math.PI*2; pts[468+i]={x:.355+Math.cos(ang)*.018,y:.415+Math.sin(ang)*.012}; pts[473+i]={x:.645+Math.cos(ang)*.018,y:.415+Math.sin(ang)*.012}; }
+  return pts;
+}
+
+function sizeTo(c,ctx){
+  const r=c.getBoundingClientRect(), dpr=Math.min(2, window.devicePixelRatio||1);
+  const w=Math.max(1,Math.round(r.width*dpr)), h=Math.max(1,Math.round(r.height*dpr));
+  if(c.width!==w||c.height!==h){ c.width=w; c.height=h; }
+  ctx.setTransform(1,0,0,1,0,0); return {w,h,dpr};
+}
+﻿const LEFT_CHEEK = [116,123,147,187,205,50,101,118,117];
+const RIGHT_CHEEK = [345,352,376,411,425,280,330,347,346];
+const LEFT_LASH = [33,246,161,160,159,158,157,173,133];
+const RIGHT_LASH = [263,466,388,387,386,385,384,398,362];
+const LEFT_LOWER = [33,7,163,144,145,153,154,155,133];
+const RIGHT_LOWER = [263,249,390,373,374,380,381,382,362];
+const LEFT_IRIS = [468,469,470,471,472];
+const RIGHT_IRIS = [473,474,475,476,477];
+const NOSE_BRIDGE = [6,197,195,5,4,1,19];
+
+
+function defaultAnalysis(){
+  return {
+    palette:["#c4a07e","#8a4a3a","#e39aa6","#c27b82"],
+    skin:{r:232,g:194,b:174}, hair:{r:40,g:28,b:22},
+    face:{x:40,y:20,w:140,h:180},
+    eye:{ lid:{r:168,g:118,b:88}, crease:{r:92,g:48,b:40}, inner:{r:214,g:176,b:146}, iris:{r:72,g:90,b:140}, liner:{r:28,g:16,b:14}, style:"wash", intensity:0.72, coloredIris:false },
+    lip:{ color:{r:186,g:78,b:92}, finish:"satin", intensity:0.78 },
+    blush:{ color:{r:222,g:118,b:128}, y:0.55, intensity:0.58 },
+    glow:{ intensity:0.42, color:{r:255,g:236,b:214} },
+    archetype:"默认迁移妆", keywords:["眼妆","颊彩","唇妆"], specials:["未上传角色时的可用妆层"], finish:"satin", wig: null
+  };
+}
+function coverMap(p, iw, ih, mirrored){
+  const w=src.width||1, h=src.height||1;
+  if(!iw||!ih) return {x:p.x,y:p.y,z:p.z||0};
+  const s=Math.max(w/iw,h/ih);
+  const ox=(w-iw*s)/2, oy=(h-ih*s)/2;
+  let x=p.x*iw*s+ox, y=p.y*ih*s+oy;
+  if(mirrored) x=w-x;
+  return {x:x/w, y:y/h, z:p.z||0};
+}
+function mapFace(face){
+  if(!face) return null;
+  let iw=1, ih=1, mirrored=false;
+  if(state.mode==="camera"){
+    iw=video.videoWidth; ih=video.videoHeight; mirrored=true;
+  } else if(state.mode==="image" && state.image){
+    iw=state.image.naturalWidth; ih=state.image.naturalHeight;
+  } else {
+    return face.map(p=>({x:p.x,y:p.y,z:p.z||0}));
+  }
+  return face.map(p=>coverMap(p, iw, ih, mirrored));
+}
+
+function lerp(a,b,t){ return {x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t}; }
+function ptsOf(lm,idx,w,h){ return idx.map(i=>pt(lm,i,w,h)).filter(p=>Number.isFinite(p.x)); }
+function resample(points, n){
+  if(points.length<2) return points.slice();
+  const seg=[0];
+  for(let i=1;i<points.length;i++) seg.push(seg[i-1]+dist(points[i-1],points[i]));
+  const total=seg[seg.length-1]||1, out=[];
+  for(let k=0;k<n;k++){
+    const t=total*(k/(n-1)), i=Math.max(1, seg.findIndex(s=>s>=t));
+    const a=points[i-1], b=points[Math.min(i,points.length-1)];
+    const span=seg[i]-seg[i-1]||1;
+    out.push(lerp(a,b,(t-seg[i-1])/span));
+  }
+  return out;
+}
+function smoothClosed(ctx, points){
+  if(points.length<3) return;
+  const p=points;
+  ctx.beginPath();
+  ctx.moveTo((p[0].x+p[p.length-1].x)/2, (p[0].y+p[p.length-1].y)/2);
+  for(let i=0;i<p.length;i++){
+    const n=p[(i+1)%p.length];
+    ctx.quadraticCurveTo(p[i].x,p[i].y,(p[i].x+n.x)/2,(p[i].y+n.y)/2);
+  }
+  ctx.closePath();
+}
+function smoothOpen(ctx, points){
+  if(points.length<2) return;
+  ctx.beginPath(); ctx.moveTo(points[0].x,points[0].y);
+  for(let i=1;i<points.length-1;i++){
+    const n=points[i+1];
+    ctx.quadraticCurveTo(points[i].x,points[i].y,(points[i].x+n.x)/2,(points[i].y+n.y)/2);
+  }
+  const last=points[points.length-1]; ctx.lineTo(last.x,last.y);
+}
+function pairLerp(A,B,t){
+  const n=Math.max(8, A.length, B.length);
+  const a=resample(A,n), b=resample(B,n);
+  return a.map((p,i)=>lerp(p,b[i],t));
+}
+function throughLine(ctx, points){
+  if(points.length<2) return;
+  ctx.beginPath();
+  points.forEach((p,i)=> i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));
+}
+function ribbon(lash, brow, t0, t1){
+  const n=Math.max(lash.length, brow.length, 10);
+  const L=resample(lash,n), B=resample(brow,n);
+  const low=L.map((p,i)=>lerp(p,B[i],t0));
+  const high=L.map((p,i)=>lerp(p,B[i],t1)).reverse();
+  return low.concat(high);
+}
+function polyFill(ctx, points, fill){
+  smoothClosed(ctx, points); ctx.fillStyle=fill; ctx.fill();
+}
+function alongGradient(ctx, a, b, stops){
+  const g=ctx.createLinearGradient(a.x,a.y,b.x,b.y);
+  stops.forEach(([t,c])=>g.addColorStop(t,c)); return g;
+}
+
+function smoothLandmarks(prev, next, k){
+  if(!next) return prev;
+  if(!prev || k>=1) return next.map(p=>({x:p.x,y:p.y,z:p.z||0}));
+  return next.map((p,i)=>{
+    const o=prev[i]||p;
+    return { x:o.x+(p.x-o.x)*k, y:o.y+(p.y-o.y)*k, z:p.z||0 };
+  });
+}
+
+function fitCover(ctx,img,w,h){
+  const iw=img.videoWidth||img.naturalWidth||img.width, ih=img.videoHeight||img.naturalHeight||img.height;
+  if(!iw||!ih) return false;
+  const s=Math.max(w/iw,h/ih), dw=iw*s, dh=ih*s;
+  ctx.drawImage(img,(w-dw)/2,(h-dh)/2,dw,dh); return true;
+}
+
+function drawModel(ctx,w,h,key){
+  const m=MODELS[key], lm=heuristicLandmarks();
+  const g=ctx.createRadialGradient(w*.5,h*.16,8,w*.5,h*.4,h*.72);
+  g.addColorStop(0,"#2a261f"); g.addColorStop(1,"#0b0b0a");
+  ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+  const hair=ptsOf(lm,FACE_OVAL,w,h).map(p=>({x:p.x*1.12-w*0.06, y:p.y*0.92-h*0.08}));
+  polyFill(ctx, hair, m.hair);
+  polyFill(ctx, ptsOf(lm,FACE_OVAL,w,h), m.skin);
+  polyFill(ctx, ptsOf(lm,LEFT_EYE,w,h), "#f4f1ea");
+  polyFill(ctx, ptsOf(lm,RIGHT_EYE,w,h), "#f4f1ea");
+  const lc=pt(lm,468,w,h), rc=pt(lm,473,w,h);
+  ctx.fillStyle=m.eye;
+  ctx.beginPath(); ctx.arc(lc.x,lc.y, dist(pt(lm,159,w,h),pt(lm,145,w,h))*0.42, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(rc.x,rc.y, dist(pt(lm,386,w,h),pt(lm,374,w,h))*0.42, 0, Math.PI*2); ctx.fill();
+  polyFill(ctx, ptsOf(lm,LIPS,w,h), m.lip);
+}
+
+function drawBase(ctx,w,h){
+  ctx.clearRect(0,0,w,h);
+  if(state.mode==="camera" && video.readyState>=2){
+    ctx.save(); ctx.translate(w,0); ctx.scale(-1,1);
+    const ok=fitCover(ctx,video,w,h); ctx.restore(); return ok;
+  }
+  if(state.mode==="image" && state.image) return fitCover(ctx,state.image,w,h);
+  drawModel(ctx,w,h,state.model); return true;
+}
+
+function sampleSkin(ctx,lm,w,h){
+  try{
+    const p=pt(lm,10,w,h);
+    const x=clamp(p.x|0,0,w-6), y=clamp((p.y+10)|0,0,h-6);
+    const d=ctx.getImageData(x,y,5,5).data; let r=0,g=0,b=0,n=0;
+    for(let i=0;i<d.length;i+=4){ if(d[i+3]>80){ r+=d[i]; g+=d[i+1]; b+=d[i+2]; n++; } }
+    if(n) state.skin={r:r/n,g:g/n,b:b/n};
+  }catch(e){}
+}
+
+function analyzeFace(lm,w,h){
+  const fw=dist(pt(lm,234,w,h),pt(lm,454,w,h)), fh=dist(pt(lm,10,w,h),pt(lm,152,w,h))||1;
+  const ratio=fw/fh, chin=dist(pt(lm,172,w,h),pt(lm,397,w,h))/fw;
+  const eyeOpen=(dist(pt(lm,159,w,h),pt(lm,145,w,h))+dist(pt(lm,386,w,h),pt(lm,374,w,h)))/2/fh;
+  const tilt=(pt(lm,33,w,h).y-pt(lm,133,w,h).y)/Math.max(1,pt(lm,133,w,h).x-pt(lm,33,w,h).x);
+  const lipW=dist(pt(lm,61,w,h),pt(lm,291,w,h))/fw, lipH=dist(pt(lm,0,w,h),pt(lm,17,w,h))/fh;
+  let face="鹅蛋脸";
+  if(ratio>.96) face="方圆脸"; else if(ratio<.78&&chin<.72) face="瓜子脸"; else if(ratio<.84) face="长脸"; else if(ratio>.9&&chin>.82) face="圆脸";
+  let eyes="杏仁眼";
+  if(tilt<-.12) eyes="上挑眼"; else if(tilt>.08) eyes="下垂眼"; else if(eyeOpen>.045) eyes="圆眼"; else if(eyeOpen<.028) eyes="深眼窝";
+  let lips="自然唇";
+  if(lipH>.085&&lipW>.32) lips="厚唇"; else if(lipH<.05) lips="薄唇"; else if(lipW>.36) lips="丰唇";
+  state.features={face,eyes,lips,fw,fh,ratio,tilt};
+  document.getElementById("fFace").textContent=face;
+  document.getElementById("fEyes").textContent=eyes;
+  document.getElementById("fLips").textContent=lips;
+}
+
+function compositeBlur(dest, layer, blur, op, alpha){
+  dest.save(); dest.globalAlpha=alpha; dest.globalCompositeOperation=op;
+  dest.filter = blur>0 ? ("blur("+blur+"px)") : "none";
+  dest.drawImage(layer,0,0); dest.restore(); dest.filter="none";
+}
+
+function drawTransferredMakeup(w,h,lm){
+  const a=state.analysis;
+  mctx.clearRect(0,0,w,h);
+  mctx.drawImage(src,0,0);
+  if(!a) return;
+  if((state.mode==="image"||state.mode==="camera") && !state.meshReady && !state.smoothLm){
+    return;
+  }
+  const live = state.mode==="camera";
+  const soft = (live?1.4:2.4) + state.soft*(live?3.2:6);
+  const A = state.all;
+  const fw=dist(pt(lm,234,w,h),pt(lm,454,w,h))||w*0.3;
+
+  if(state.toggles.base!==false){
+    const L=layerCanvas(w,h), c=L.ctx;
+    smoothClosed(c, ptsOf(lm,FACE_OVAL,w,h));
+    c.fillStyle=rgba(mix(state.skin,a.skin,.28), 0.16*A); c.fill();
+    compositeBlur(mctx, L.c, soft*0.4, "soft-light", 0.7);
+  }
+
+  if(state.toggles.blush!==false){
+    const L=layerCanvas(w,h), c=L.ctx;
+    smoothClosed(c, ptsOf(lm,FACE_OVAL,w,h)); c.clip();
+    const alpha=(0.20+a.blush.intensity*0.32)*state.cheek*A;
+    [[LEFT_CHEEK,50],[RIGHT_CHEEK,280]].forEach(([idx,core])=>{
+      const shape=ptsOf(lm,idx,w,h);
+      if(shape.length<5) return;
+      const mid=pt(lm,core,w,h);
+      const g=c.createRadialGradient(mid.x, mid.y, fw*0.02, mid.x, mid.y, fw*0.16);
+      g.addColorStop(0, rgba(a.blush.color, alpha));
+      g.addColorStop(0.55, rgba(a.blush.color, alpha*0.45));
+      g.addColorStop(1, rgba(a.blush.color, 0));
+      c.save(); smoothClosed(c, shape); c.fillStyle=g; c.fill(); c.restore();
+    });
+    compositeBlur(mctx, L.c, soft*0.7, "multiply", 1);
+    compositeBlur(mctx, L.c, soft*0.3, "overlay", 0.22*A);
+  }
+
+  if(state.toggles.glow!==false){
+    const L=layerCanvas(w,h), c=L.ctx;
+    c.lineCap="round"; c.lineJoin="round";
+    const hi=rgba(a.glow.color, (0.16+a.glow.intensity*0.28)*state.cheek*A);
+    c.strokeStyle=hi; c.lineWidth=fw*0.035;
+    smoothOpen(c, ptsOf(lm,NOSE_BRIDGE,w,h)); c.stroke();
+    const browBand=ribbon(ptsOf(lm,LEFT_BROW,w,h).concat(ptsOf(lm,RIGHT_BROW,w,h).reverse()), ptsOf(lm,[10,338,297,67,109],w,h), 0.15, 0.55);
+    if(browBand.length>6){ c.fillStyle=rgba(a.glow.color, 0.12*state.cheek*A); smoothClosed(c, browBand); c.fill(); }
+    if(a.eye.style==="cut"){
+      [[145,133,33],[374,362,263]].forEach(tri=>{
+        const pts=ptsOf(lm,tri,w,h);
+        if(pts.length<3) return;
+        const under=[pts[0], lerp(pts[0],pts[1],0.7), lerp(pts[0],pts[2],0.7)];
+        c.fillStyle=rgba(a.eye.inner, 0.22*state.eye*A); smoothClosed(c, under); c.fill();
+      });
+    }
+    compositeBlur(mctx, L.c, soft*0.45, "screen", 1);
+  }
+
+  if(state.toggles.eye!==false){
+    const L=layerCanvas(w,h), c=L.ctx;
+    const a1=(0.30+a.eye.intensity*0.5)*state.eye*A;
+    const pairs=[
+      {lash:LEFT_LASH, lower:LEFT_LOWER, brow:LEFT_BROW, eye:LEFT_EYE, outer:33, inner:133, dir:-1},
+      {lash:RIGHT_LASH, lower:RIGHT_LOWER, brow:RIGHT_BROW, eye:RIGHT_EYE, outer:263, inner:362, dir:1}
+    ];
+    pairs.forEach(p=>{
+      const lash=ptsOf(lm,p.lash,w,h), brow=ptsOf(lm,p.brow,w,h), lower=ptsOf(lm,p.lower,w,h);
+      if(lash.length<4||brow.length<3) return;
+      const outer=pt(lm,p.outer,w,h), inner=pt(lm,p.inner,w,h);
+      const t1=a.eye.style==="smoky"?0.62:a.eye.style==="wing"?0.55:0.48;
+      const lid=ribbon(lash,brow,0.0,t1);
+      const crease=ribbon(lash,brow,0.22,t1);
+      c.save();
+      smoothClosed(c, lid);
+      c.fillStyle=alongGradient(c, outer, inner, [
+        [0, rgba(a.eye.crease, a1)],
+        [0.35, rgba(a.eye.lid, a1*0.9)],
+        [0.75, rgba(a.eye.inner, a1*0.45)],
+        [1, rgba(a.eye.inner, 0.08)]
+      ]);
+      c.fill();
+      smoothClosed(c, crease);
+      c.fillStyle=alongGradient(c, outer, inner, [
+        [0, rgba(a.eye.crease, a1*0.7)],
+        [0.55, rgba(a.eye.lid, a1*0.25)],
+        [1, rgba(a.eye.lid, 0)]
+      ]);
+      c.fill();
+      c.restore();
+    });
+    compositeBlur(mctx, L.c, Math.min(soft*0.35, 4.5), "multiply", 1);
+    compositeBlur(mctx, L.c, 1.2, "overlay", 0.28*state.eye*A);
+    mctx.save();
+    mctx.globalCompositeOperation="destination-out";
+    path(mctx,lm,LEFT_EYE,w,h); mctx.fill();
+    path(mctx,lm,RIGHT_EYE,w,h); mctx.fill();
+    mctx.restore();
+  }
+
+  if(state.toggles.liner!==false){
+    const L=layerCanvas(w,h), c=L.ctx;
+    c.lineCap="round"; c.lineJoin="round";
+    c.strokeStyle=rgba(a.eye.liner, (0.62+a.eye.intensity*0.35)*state.eye*A);
+    const lw=Math.max(1.3, fw*0.012*(a.eye.style==="wing"||a.eye.style==="smoky"?1.8:1.15)*state.eye*A);
+    [[LEFT_LASH,LEFT_LOWER,-1,33],[RIGHT_LASH,RIGHT_LOWER,1,263]].forEach(([upIdx,lowIdx,dir,outerId])=>{
+      const upper=ptsOf(lm,upIdx,w,h), lower=ptsOf(lm,lowIdx,w,h);
+      if(upper.length<3||lower.length<3) return;
+      const upLine=pairLerp(upper, lower, 0.16);
+      const lowLine=pairLerp(lower, upper, 0.14);
+      c.lineWidth=lw;
+      throughLine(c, upLine); c.stroke();
+      c.lineWidth=Math.max(0.8, lw*0.42);
+      c.strokeStyle=rgba(a.eye.liner, (0.28+a.eye.intensity*0.2)*state.eye*A);
+      throughLine(c, lowLine); c.stroke();
+      c.strokeStyle=rgba(a.eye.liner, (0.62+a.eye.intensity*0.35)*state.eye*A);
+      if(a.eye.style==="wing" || state.features.eyes==="上挑眼"){
+        const o=upLine[0];
+        const nxt=upLine[1]||o;
+        const vx=o.x-nxt.x, vy=o.y-nxt.y;
+        const len=Math.hypot(vx,vy)||1;
+        c.lineWidth=lw;
+        c.beginPath(); c.moveTo(o.x,o.y);
+        c.quadraticCurveTo(o.x+vx/len*lw*1.2, o.y+vy/len*lw*0.2-lw*0.3, o.x+vx/len*(lw*3.2+fw*0.02), o.y+vy/len*lw-lw*1.2);
+        c.stroke();
+      }
+    });
+    mctx.drawImage(L.c,0,0);
+  }
+
+  if(state.toggles.glow!==false && a.eye.coloredIris){
+    const L=layerCanvas(w,h), c=L.ctx;
+    [[LEFT_IRIS,LEFT_EYE],[RIGHT_IRIS,RIGHT_EYE]].forEach(([iris,eye])=>{
+      if(!lm[iris[0]]) return;
+      const shape=ptsOf(lm,iris,w,h);
+      if(shape.length<3) return;
+      c.save(); path(c,lm,eye,w,h); c.clip();
+      const cx=shape.reduce((s,p)=>s+p.x,0)/shape.length;
+      const cy=shape.reduce((s,p)=>s+p.y,0)/shape.length;
+      c.fillStyle=rgba(a.eye.iris, 0.32*state.eye*A);
+      smoothClosed(c, shape); c.fill();
+      c.fillStyle="rgba(12,8,8,0.55)";
+      c.beginPath(); c.arc(cx,cy, dist(shape[0],{x:cx,y:cy})*0.38, 0, Math.PI*2); c.fill();
+      c.restore();
+    });
+    mctx.drawImage(L.c,0,0);
+  }
+
+  if(state.toggles.lip!==false){
+    const L=layerCanvas(w,h), c=L.ctx;
+    const lipPts=ptsOf(lm,LIPS,w,h);
+    const lipA=(0.36+a.lip.intensity*0.42)*state.lip*A;
+    c.save();
+    smoothClosed(c, lipPts);
+    c.fillStyle=rgba(a.lip.color, lipA); c.fill();
+    c.globalCompositeOperation="multiply";
+    c.fillStyle=rgba(punch(a.lip.color,1.04,-0.1), lipA*0.4); c.fill();
+    if(a.lip.finish!=="matte"){
+      const l=pt(lm,61,w,h), r=pt(lm,291,w,h), mid=pt(lm,17,w,h);
+      c.globalCompositeOperation="screen";
+      const g=c.createLinearGradient(l.x, mid.y-8, r.x, mid.y+6);
+      const spec=a.lip.finish==="gloss"?0.38*state.lip*A:0.16*state.lip*A;
+      g.addColorStop(0,"rgba(255,236,228,0)");
+      g.addColorStop(0.5,"rgba(255,236,228,"+spec+")");
+      g.addColorStop(1,"rgba(255,236,228,0)");
+      c.fillStyle=g; c.fill();
+    }
+    c.restore();
+    compositeBlur(mctx, L.c, Math.max(0.8, soft*0.12), "source-over", 1);
+  }
+}
+
+
+function compositeView(w,h){
+  vctx.clearRect(0,0,w,h);
+  vctx.drawImage(src,0,0);
+  if(!state.compare){ vctx.drawImage(mk,0,0); split.classList.remove("on"); return; }
+  const x=Math.round(w*state.compareX);
+  vctx.save(); vctx.beginPath(); vctx.rect(x,0,w-x,h); vctx.clip(); vctx.drawImage(mk,0,0); vctx.restore();
+  split.classList.add("on"); split.style.left=(state.compareX*100)+"%";
+}
+
+function renderAll(){
+  const {w,h}=sizeTo(view,vctx);
+  sizeTo(mk,mctx); sizeTo(src,sctx);
+  mk.width=src.width=view.width; mk.height=src.height=view.height;
+  if(!drawBase(sctx,w,h)) return;
+  if(state.mode==="model"){
+    state.landmarks=heuristicLandmarks();
+    state.smoothLm=state.landmarks;
+    state.meshReady=true;
+  }
+  const lm=state.smoothLm || state.landmarks || heuristicLandmarks();
+  if(lm){ sampleSkin(sctx,lm,w,h); analyzeFace(lm,w,h); }
+  drawTransferredMakeup(w,h,lm);
+  compositeView(w,h);
+  if (state.toggles.wig!==false && state.analysis && state.analysis.wig && window.CosFusionHair) {
+    vctx.save();
+    if (state.compare) {
+      const x=Math.round(w*state.compareX);
+      vctx.beginPath(); vctx.rect(x,0,w-x,h); vctx.clip();
+    }
+    CosFusionHair.draw(vctx, w, h, lm, state.analysis.wig, {
+      opacity: state.wig.density,
+      scale: state.wig.length,
+      volume: state.wig.volume,
+      bangs: state.wig.bangs,
+      ox: (state.wig.ox || 0) * w,
+      oy: (state.wig.oy || 0) * h
+    });
+    vctx.restore();
+  }
+  if (typeof updateDragCursor==="function") updateDragCursor();
+}
+
+function loop(){
+  state.tick++; renderAll();
+  if(state.mode==="camera" && state.tick%2===0) runMesh(video);
+    else if(state.mode==="image" && state.tick%8===0) runMesh(state.image);
+  state.loopId=requestAnimationFrame(loop);
+}
+function stopLoop(){ cancelAnimationFrame(state.loopId); }
+
+function loadScript(srcUrl){
+  return new Promise((res,rej)=>{ const s=document.createElement("script"); s.src=srcUrl; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
+}
+function ensureMesh(){
+  if(state.faceMesh) return state.faceMesh;
+  if(state.err) return null;
+  if(!state.promise){
+    setEngine("加载 FaceMesh");
+    state.promise=loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js").then(()=>{
+      if(!window.FaceMesh) throw new Error("no");
+      const inst=new window.FaceMesh({ locateFile:f=>"https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/"+f });
+      inst.setOptions({ maxNumFaces:1, refineLandmarks:true, selfieMode:false, minDetectionConfidence:.4, minTrackingConfidence:.4 });
+      inst.onResults(ret=>{
+        const face=ret && ret.multiFaceLandmarks && ret.multiFaceLandmarks[0];
+        if(face){
+          const mapped=mapFace(face);
+          state.landmarks=mapped;
+          state.smoothLm=smoothLandmarks(state.smoothLm, mapped, state.mode==="camera"?0.38:1);
+          state.meshReady=true;
+          setEngine("已贴合五官");
+          if(state.analysis) setStatus(state.mode==="camera"?"实时妆容与假发贴图中":"妆容与假发已贴到五官");
+          if(state.mode!=="camera") renderAll();
+        }
+      });
+      state.faceMesh=inst; setEngine("FaceMesh 就绪"); return inst.initialize ? inst.initialize().then(()=>inst) : inst;
+    }).catch((err)=>{ console.error(err); state.err=true; setEngine("人脸识别未加载"); setStatus("无法加载 FaceMesh，请联网后刷新，或改用上传自拍"); return null; });
+  }
+  return state.promise;
+}
+async function runMesh(target){
+  const mesh=await ensureMesh(); if(!mesh || state.busy) return;
+  let input=target;
+  if(state.mode==="camera") input=video;
+  else if(state.mode==="image" && state.image) input=state.image;
+  else input=target || src;
+  if(state.mode==="camera" && video.readyState<2) return;
+  try{ state.busy=true; await mesh.send({ image: input }); }
+  catch(e){ console.error(e); setEngine("关键点发送失败"); }
+  finally{ state.busy=false; }
+}
+
+async function startCam(){
+  try{
+    state.stream=await navigator.mediaDevices.getUserMedia({ video:{ facingMode:"user", width:1280, height:720 }, audio:false });
+    video.srcObject=state.stream; await video.play();
+    state.mode="camera"; state.meshReady=false; state.smoothLm=null; state.landmarks=null;
+    if(!state.analysis){ state.analysis=defaultAnalysis(); renderLayers(); }
+    setStatus("镜头已开，正在识别五官并迁移妆容");
+    setStep(3); ensureMesh(); stopLoop(); loop();
+  }catch(e){ setStatus("镜头未授权，请改用上传自拍"); }
+}
+function stopCam(){
+  if(state.stream) state.stream.getTracks().forEach(t=>t.stop());
+  state.stream=null; video.srcObject=null;
+  if(state.mode==="camera"){ state.mode="model"; setStatus("已关闭镜头"); stopLoop(); renderAll(); }
+}
+
+function loadFace(file){
+  const url=URL.createObjectURL(file); const img=new Image();
+  img.onload=()=>{
+    state.image=img; state.mode="image"; state.meshReady=false; state.smoothLm=null; state.landmarks=null;
+    setStatus(state.analysis?"自拍已载入 · 正在贴合五官":"自拍已载入 · 请先解析角色图");
+    setStep(state.analysis?3:2); stopCam(); renderAll(); runMesh(src); URL.revokeObjectURL(url);
+  };
+  img.src=url;
+}
+
+function loadCharacter(img, name){
+  state.char=img;
+  state.analysis=analyzeCharacter(img);
+  state.hairSession = (window.CosFusionHair && CosFusionHair.makeSession) ? CosFusionHair.makeSession(img) : null;
+  if (state.hairSession) { state.hairSession.setTool("brush"); state.hairSession.setSize(+document.getElementById("hairBrushSize").value||28); }
+  commitHairMask();
+  drawCharPreview();
+  if (typeof syncHairTools==="function") syncHairTools();
+  renderLayers();
+  setStep(2);
+  document.getElementById("title").textContent=state.analysis.archetype;
+  if (state.analysis.wig && state.analysis.wig.coverage > 0.004) {
+    setStatus("已载入角色图。粉色是头发选区，可继续涂改");
+  } else {
+    setStatus("请在左侧涂出头发：画笔涂抹，或点「点选同类色」再点头发");
+  }
+  renderAll();
+}
+
+function readImage(file, cb){
+  const url=URL.createObjectURL(file); const img=new Image();
+  img.onload=()=>{ cb(img); URL.revokeObjectURL(url); };
+  img.src=url;
+}
+
+document.getElementById("charInput").onchange=e=>{ const f=e.target.files&&e.target.files[0]; if(f) readImage(f, img=>loadCharacter(img, f.name)); };
+["p1","p2"].forEach((id,i)=>{
+  document.getElementById(id).onclick=()=>{
+    const img=new Image();
+    img.onload=()=>loadCharacter(img, "参考图"+(i+1));
+    img.onerror=()=>setStatus("未找到项目参考图，请手动上传");
+    img.src = i===0 ? "动漫参考图1.jpg" : "动漫参考图2.jpg";
+  };
+});
+const drop=document.getElementById("charDrop");
+["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.add("hot"); }));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.remove("hot"); }));
+drop.addEventListener("drop", e=>{
+  const f=e.dataTransfer.files&&e.dataTransfer.files[0]; if(f) readImage(f, img=>loadCharacter(img, f.name));
+});
+
+function syncHairTools(){
+  const sess=state.hairSession;
+  document.getElementById("hairBrush").classList.toggle("on", !sess || sess.tool==="brush");
+  document.getElementById("hairErase").classList.toggle("on", !!(sess && sess.tool==="erase"));
+  document.getElementById("hairFill").classList.toggle("on", !!(sess && sess.tool==="fill"));
+}
+document.getElementById("hairBrush").onclick=()=>{ if(!state.hairSession) return; state.hairSession.setTool("brush"); syncHairTools(); setStatus("画笔：在头发上涂抹"); };
+document.getElementById("hairErase").onclick=()=>{ if(!state.hairSession) return; state.hairSession.setTool("erase"); syncHairTools(); setStatus("擦除：去掉多选的区域"); };
+document.getElementById("hairFill").onclick=()=>{ if(!state.hairSession) return; state.hairSession.setTool("fill"); syncHairTools(); setStatus("点选同类色：点击头发，相近颜色会连成一片"); };
+document.getElementById("hairClear").onclick=()=>{
+  if(!state.hairSession) return;
+  state.hairSession.clear(); commitHairMask(); drawCharPreview(); renderLayers(); renderAll();
+  setStatus("已清空，请重新涂出头发");
+};
+document.getElementById("hairBrushSize").oninput=e=>{
+  const n=+e.target.value;
+  document.getElementById("vBrush").textContent=n;
+  if(state.hairSession) state.hairSession.setSize(n);
+};
+let hairDrag=false;
+charCanvas.addEventListener("pointerdown", e=>{
+  if(!state.hairSession) return;
+  e.preventDefault();
+  const p=state.hairSession.pointerToSrc(charCanvas, e.clientX, e.clientY);
+  if(!p.inside) return;
+  if(state.hairSession.tool==="fill"){
+    state.hairSession.fillAt(p.x, p.y, 44);
+    commitHairMask(); drawCharPreview(); renderLayers(); renderAll();
+    setStatus(state.analysis.wig && state.analysis.wig.coverage>0.004 ? "已点选头发，可用画笔修补" : "没选中，请点在头发颜色上");
+    return;
+  }
+  hairDrag=true;
+  charCanvas.setPointerCapture(e.pointerId);
+  state.hairSession.strokeStart(p.x, p.y);
+  drawCharPreview();
+});
+charCanvas.addEventListener("pointermove", e=>{
+  if(!hairDrag || !state.hairSession) return;
+  const p=state.hairSession.pointerToSrc(charCanvas, e.clientX, e.clientY);
+  state.hairSession.strokeMove(p.x, p.y);
+  drawCharPreview();
+});
+function endHairStroke(){
+  if(!hairDrag) return;
+  hairDrag=false;
+  if(state.hairSession) state.hairSession.strokeEnd();
+  commitHairMask(); drawCharPreview(); renderLayers(); renderAll();
+  if(state.analysis && state.analysis.wig && state.analysis.wig.coverage>0.004) setStatus("头发已涂选，可继续修改或采集真人五官");
+}
+charCanvas.addEventListener("pointerup", endHairStroke);
+charCanvas.addEventListener("pointercancel", endHairStroke);
+
+document.getElementById("camBtn").onclick=startCam;
+document.getElementById("stopBtn").onclick=stopCam;
+document.getElementById("faceInput").onchange=e=>{ const f=e.target.files&&e.target.files[0]; if(f) loadFace(f); };
+document.getElementById("shotBtn").onclick=()=>{
+  if(state.mode!=="camera") return;
+  const c=document.createElement("canvas"); c.width=view.width; c.height=view.height;
+  c.getContext("2d").drawImage(src,0,0);
+  const img=new Image(); img.onload=()=>{ state.image=img; state.mode="image"; stopCam(); setStatus("已定格"); renderAll(); runMesh(img); };
+  img.src=c.toDataURL("image/png");
+};
+document.getElementById("cmpBtn").onclick=()=>{ state.compare=!state.compare; document.getElementById("cmpBtn").textContent=state.compare?"退出对比":"前后对比"; renderAll(); };
+document.getElementById("saveBtn").onclick=()=>{
+  renderAll();
+  const a=document.createElement("a"); a.download="cosfusion-wig-"+Date.now()+".png"; a.href=view.toDataURL("image/png"); a.click();
+};
+document.getElementById("privacyBtn").onclick=()=>alert("角色图解析与人脸关键点都在浏览器本地完成，不会上传服务器。");
+
+[["all","vAll","all"],["eye","vEye","eye"],["lip","vLip","lip"],["cheek","vCheek","cheek"],["soft","vSoft","soft"]].forEach(([id,lab,key])=>{
+  document.getElementById(id).oninput=e=>{
+    state[key]=e.target.value/100;
+    document.getElementById(lab).textContent=e.target.value+"%";
+    renderAll();
+  };
+});
+[["wigDen","vDen","density"],["wigLen","vLen","length"],["wigBang","vBang","bangs"],["wigVol","vVol","volume"]].forEach(([id,lab,key])=>{
+  document.getElementById(id).oninput=e=>{
+    state.wig[key]=e.target.value/100;
+    document.getElementById(lab).textContent=e.target.value+"%";
+    renderAll();
+  };
+});
+document.getElementById("wigToggle").onclick=()=>{
+  state.toggles.wig = state.toggles.wig===false;
+  const on = state.toggles.wig!==false;
+  document.getElementById("wigToggle").classList.toggle("on", on);
+  renderAll();
+};
+document.getElementById("modelRow").onclick=e=>{
+  const b=e.target.closest(".model"); if(!b) return;
+  state.model=b.dataset.m; state.mode="model"; state.landmarks=heuristicLandmarks();
+  document.querySelectorAll("#modelRow .model").forEach(x=>x.classList.toggle("on", x===b));
+  setStatus("使用 "+b.dataset.m+" 底模预览迁移"); renderAll();
+};
+
+let drag=false;
+split.addEventListener("pointerdown", e=>{ drag=true; split.setPointerCapture(e.pointerId); e.stopPropagation(); });
+window.addEventListener("pointerup", ()=>{ drag=false; wigDrag=false; stage.classList.remove("dragging"); });
+window.addEventListener("pointermove", e=>{
+  if(drag){
+    const r=stage.getBoundingClientRect();
+    state.compareX=clamp((e.clientX-r.left)/r.width,.08,.92);
+    renderAll();
+    return;
+  }
+  if(wigDrag){
+    const r=stage.getBoundingClientRect();
+    state.wig.ox = (state.wig.ox||0) + (e.clientX - wigLast.x) / r.width;
+    state.wig.oy = (state.wig.oy||0) + (e.clientY - wigLast.y) / r.height;
+    wigLast={x:e.clientX,y:e.clientY};
+    renderAll();
+  }
+});
+let wigDrag=false, wigLast={x:0,y:0};
+stage.addEventListener("pointerdown", e=>{
+  if(state.compare){
+    const r=stage.getBoundingClientRect();
+    state.compareX=clamp((e.clientX-r.left)/r.width,.08,.92);
+    renderAll();
+    return;
+  }
+  if(state.toggles.wig===false || !state.analysis || !state.analysis.wig || state.analysis.wig.coverage<0.004) return;
+  wigDrag=true;
+  wigLast={x:e.clientX,y:e.clientY};
+  stage.classList.add("dragging");
+  stage.setPointerCapture(e.pointerId);
+});
+function updateDragCursor(){
+  const on=state.toggles.wig!==false && state.analysis && state.analysis.wig && state.analysis.wig.coverage>0.004;
+  stage.classList.toggle("can-drag", !!on);
+  const hint=document.getElementById("dragHint");
+  if(hint) hint.style.display = on ? "block" : "none";
+}
+document.getElementById("wigReset").onclick=()=>{
+  state.wig.ox=0; state.wig.oy=0;
+  setStatus("已复位假发位置");
+  renderAll();
+};
+window.addEventListener("resize", ()=>renderAll());
+
+setEngine("启发式贴合");
+ensureMesh();
+renderLayers();
+renderAll();
+
+
+
+
+</script>
+</body>
+</html>
