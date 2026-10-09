@@ -4,10 +4,8 @@
 
 **求职可直接附上这两个链接（发布 GitHub Pages 后）：**
 
-- 在线演示：`https://你的用户名.github.io/CosFusion/`
-- 项目仓库：`https://github.com/你的用户名/CosFusion`
-
-把上面的 `你的用户名` 换成你的 GitHub 用户名即可。
+- 在线演示：`https://gmegan1209-lab.github.io/CosFusion/`
+- 项目仓库：`https://github.com/gmegan1209-lab/CosFusion`
 
 ## Live pages
 
@@ -46,26 +44,26 @@ npx --yes serve .
 
 ## 3 步发布到 GitHub Pages（可被公开打开）
 
-本机还没有登录 GitHub，所以需要你在网页上点一次授权。仓库文件已经准备好。
+GitHub 登录名是 **gmegan1209-lab**（主页显示名 Raven Sanchez / Raven-Schanze）。项目仓库用 CosFusion，不要用显示名当仓库名。
 
-1. 打开 [https://github.com/new](https://github.com/new)，仓库名填 `CosFusion`，选 **Public**，不要勾选 “Add README”
+1. 打开 [https://github.com/new](https://github.com/new)，仓库名填 `CosFusion`，选 **Public**，不要勾选 Add README（若已建好可跳过）
 2. 在本项目目录执行：
 
 ```bash
-git remote add origin https://github.com/你的用户名/CosFusion.git
+git remote add origin https://github.com/gmegan1209-lab/CosFusion.git
 git branch -M main
 git push -u origin main
 ```
 
 3. 打开仓库 **Settings → Pages**，Source 选 `Deploy from a branch`，Branch 选 `main` / `/`（根目录），保存。一两分钟后访问：
 
-`https://你的用户名.github.io/CosFusion/`
+`https://gmegan1209-lab.github.io/CosFusion/`
 
 ## 简历上可以怎么写
 
 > CosFusion 次元妆造融合平台（个人项目）  
 > 独立完成角色妆面解析、MediaPipe 五官迁移与假发贴图交互；纯前端本地推理，已部署 GitHub Pages。  
-> Demo: https://你的用户名.github.io/CosFusion/
+> Demo: https://gmegan1209-lab.github.io/CosFusion/
 
 ## 搜索可见性说明
 
