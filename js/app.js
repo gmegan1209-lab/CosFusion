@@ -1,195 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CosFusion 添加假发版 | 角色假发抠图贴合</title>
-<meta name="description" content="从角色图抠出头发贴图，再按真人五官位置贴到头上。" />
-<style>
-:root{--bg:#080807;--panel:rgba(255,255,255,.045);--line:rgba(240,223,194,.16);--text:#f6f1e8;--muted:rgba(246,241,232,.68);--dim:rgba(246,241,232,.4);--gold:#e6d2ae;--gold2:#c4a574;--ink:#11110f;--ok:#cfe8c8;--shadow:0 24px 70px rgba(0,0,0,.42)}
-*{box-sizing:border-box}html,body{margin:0;background:#080807;color:var(--text)}
-body{font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:radial-gradient(circle at 8% -8%,rgba(230,210,174,.14),transparent 30%),radial-gradient(circle at 92% 8%,rgba(180,120,255,.08),transparent 26%),#080807}
-button,input{font:inherit}button{color:inherit;cursor:pointer}canvas,video,img{display:block;max-width:100%}a{color:inherit;text-decoration:none}
-.caps{letter-spacing:.2em;text-transform:uppercase}
-.top{position:sticky;top:0;z-index:30;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line);background:rgba(8,8,7,.82);backdrop-filter:blur(16px)}
-.brand{display:flex;gap:10px;align-items:center}.mark{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:11px}
-.brand b{display:block;font-size:13px}.brand span{display:block;color:var(--muted);font-size:10px}
-.nav{display:flex;gap:16px}.nav a{font-size:11px;color:var(--muted)}
-.btn{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:999px;padding:9px 14px}
-.btn:hover{background:rgba(230,210,174,.1)}.btn-gold{background:var(--gold);color:var(--ink);border-color:transparent;font-weight:650}
-.wrap{width:min(1480px,calc(100vw - 24px));margin:16px auto 36px;display:grid;grid-template-columns:300px minmax(0,1fr) 340px;gap:14px}
-.card{border:1px solid var(--line);background:var(--panel);border-radius:24px;box-shadow:var(--shadow);backdrop-filter:blur(14px)}
-.side{padding:16px;display:flex;flex-direction:column;gap:12px;max-height:calc(100vh - 92px);overflow:auto}
-.kicker{color:var(--gold2);font-size:10px}
-h1,h2,h3{margin:0}h1{font-family:"Palatino Linotype","Songti SC",serif;font-size:28px;font-weight:500;line-height:1.2}
-h2{font-size:15px}h3{font-size:13px}.lead{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
-.drop{border:1px dashed rgba(230,210,174,.32);border-radius:18px;padding:14px;text-align:center;background:rgba(255,255,255,.03)}
-.drop.hot{border-color:var(--gold);background:rgba(230,210,174,.08)}
-.drop input{display:none}.drop p{margin:8px 0 0;color:var(--dim);font-size:11px}
-#charCanvas{width:100%;height:340px;border-radius:16px;background:#12110f;border:1px solid var(--line);cursor:crosshair;touch-action:none}
-.mask-tools{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;justify-content:center}
-.mask-tools .btn{padding:7px 10px;font-size:11px}
-.mask-tools .btn.on{background:var(--gold);color:var(--ink);border-color:transparent}
-.mask-tools .tiny{width:100%;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px}
-.mask-tools .tiny input{flex:1}
-.tags{display:flex;flex-wrap:wrap;gap:6px}.tag{padding:5px 8px;border-radius:999px;border:1px solid var(--line);font-size:11px;color:var(--muted)}
-.layer{padding:10px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
-.layer-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
-.sw{display:flex;gap:5px;flex-wrap:wrap}.dot{width:16px;height:16px;border-radius:50%;border:1px solid rgba(255,255,255,.2)}
-.meta{color:var(--dim);font-size:11px;line-height:1.55}
-.stage-card{padding:12px}
-.stage{position:relative;overflow:hidden;border-radius:20px;aspect-ratio:4/5;border:1px solid var(--line);background:linear-gradient(180deg,#171613,#0c0c0a)}
-#view,#src,#mk{position:absolute;inset:0;width:100%;height:100%}#src,#mk{opacity:0;pointer-events:none}
-.stage.can-drag{cursor:grab}.stage.dragging{cursor:grabbing}
-.drag-hint{position:absolute;left:12px;bottom:86px;z-index:4;padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:rgba(0,0,0,.48);backdrop-filter:blur(10px);font-size:11px;color:var(--gold);pointer-events:none}
-#cam{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none}
-.hud{position:absolute;z-index:4;padding:8px 11px;border-radius:999px;border:1px solid var(--line);background:rgba(0,0,0,.48);backdrop-filter:blur(10px);font-size:12px}
-.st{top:12px;left:12px}.en{top:12px;right:12px;color:var(--gold)}
-.split{position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(transparent,var(--gold),transparent);cursor:ew-resize;z-index:5;display:none}
-.split.on{display:block}.knob{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;background:var(--gold);color:var(--ink);display:grid;place-items:center;font-weight:700}
-.cap{position:absolute;left:12px;right:12px;bottom:12px;z-index:4;padding:12px;border-radius:16px;border:1px solid var(--line);background:rgba(0,0,0,.45);backdrop-filter:blur(10px)}
-.cap b{display:block;font-size:14px}.cap span{display:block;margin-top:4px;color:var(--muted);font-size:12px;line-height:1.55}
-.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.upload{display:inline-flex;align-items:center;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);cursor:pointer}
-.upload input{display:none}
-.row{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}
-.slider{width:100%;accent-color:var(--gold)}
-.toggle{width:36px;height:20px;border:0;border-radius:999px;background:#2b2a27;position:relative}
-.toggle.on{background:var(--gold)}.toggle:after{content:"";position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.15s}
-.toggle.on:after{left:19px}
-.stat{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.stat div{padding:10px;border-radius:14px;border:1px solid var(--line)}
-.stat i{display:block;font-style:normal;font-size:10px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase}
-.stat b{display:block;margin-top:5px;font-size:13px}
-.note{color:var(--dim);font-size:11px;line-height:1.65}
-.steps{display:flex;gap:6px;margin-bottom:4px}
-.step{flex:1;padding:8px;border-radius:12px;border:1px solid var(--line);font-size:11px;color:var(--dim);text-align:center}
-.step.on{color:var(--ink);background:var(--gold);border-color:transparent}
-.models{display:flex;gap:6px}.model{flex:1;border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:12px;padding:8px;font-size:11px;text-align:left}
-.model.on{border-color:var(--gold)}
-@media(max-width:1100px){.wrap{grid-template-columns:1fr}.side{max-height:none}.nav{display:none}h1{font-size:24px}}
-</style>
-</head>
-<body>
-<header class="top">
-  <a class="brand" href="index - v8i风格美化版.html">
-    <div class="mark caps">CF</div>
-    <div><b>COSFUSION</b><span class="caps">Wig Cutout</span></div>
-  </a>
-  <nav class="nav caps">
-    <a href="index - v8i风格美化版.html">官网</a>
-    <a href="virtual-tryon.html">试妆工坊 1</a>
-    <a href="试妆网站2.html">试妆网站2</a>
-    <a href="添加假发版.html">添加假发版</a>
-    <a href="new design web.html">New Design</a>
-  </nav>
-  <div style="display:flex;gap:8px">
-    <button class="btn" id="privacyBtn" type="button">本地解析</button>
-    <button class="btn btn-gold" id="saveBtn" type="button">保存迁移结果</button>
-  </div>
-</header>
-<main class="wrap">
-  <aside class="card side">
-    <div class="steps">
-      <div class="step on" id="s1">1 解析角色</div>
-      <div class="step" id="s2">2 采集人脸</div>
-      <div class="step" id="s3">3 妆+假发贴图</div>
-    </div>
-    <div class="kicker caps">Character parse</div>
-    <h2>自己涂出角色头发，再贴到真人脸上。</h2>
-    <p class="lead">自动抠图不稳定，所以改成你自己涂。粉色区域就是假发；涂完后按真人五官贴上去。</p>
-    <div class="drop" id="charDrop">
-      <canvas id="charCanvas" width="480" height="600"></canvas>
-      <div class="mask-tools">
-        <button class="btn on" id="hairBrush" type="button">画头发</button>
-        <button class="btn" id="hairErase" type="button">擦除</button>
-        <button class="btn" id="hairFill" type="button">点选同类色</button>
-        <button class="btn" id="hairClear" type="button">清空</button>
-        <div class="tiny"><span>笔刷</span><input id="hairBrushSize" type="range" min="8" max="72" value="28"><b id="vBrush">28</b></div>
-      </div>
-      <label class="btn btn-gold" style="margin-top:10px;display:inline-flex">上传动漫人物图<input id="charInput" type="file" accept="image/*"></label>
-      <p>粉色是选中的头发。请用画笔涂，或点「点选同类色」再点头发。涂完会立刻贴到右侧脸上。</p>
-    </div>
-    <div class="models">
-      <button class="model" id="p1" type="button">参考图 1</button>
-      <button class="model" id="p2" type="button">参考图 2</button>
-    </div>
-    <div id="charTags" class="tags"><span class="tag">等待角色图</span></div>
-    <div id="layers"></div>
-  </aside>
-
-  <section class="card stage-card">
-    <div class="stage" id="stage">
-      <canvas id="src" width="960" height="1200"></canvas>
-      <canvas id="mk" width="960" height="1200"></canvas>
-      <canvas id="view" width="960" height="1200"></canvas>
-      <video id="cam" autoplay playsinline muted></video>
-      <div class="hud st" id="status">请先上传动漫人物图</div>
-      <div class="hud en" id="engine">引擎待命</div>
-      <div class="split" id="split"><div class="knob">⇄</div></div>
-      <div class="drag-hint" id="dragHint">在画面上拖动假发，对准额头</div>
-      <div class="cap">
-        <b id="title">假发抠图试戴</b>
-        <span id="desc">先在左侧涂出头发，再开镜头或上传自拍。可直接在画面上拖动假发。</span>
-      </div>
-    </div>
-    <div class="tools">
-      <button class="btn btn-gold" id="camBtn" type="button">开启镜头</button>
-      <label class="upload">上传真人自拍<input id="faceInput" type="file" accept="image/*"></label>
-      <button class="btn" id="shotBtn" type="button">定格</button>
-      <button class="btn" id="cmpBtn" type="button">前后对比</button>
-      <button class="btn" id="stopBtn" type="button">关闭镜头</button>
-    </div>
-  </section>
-
-  <aside class="card side">
-    <div class="kicker caps">Face match</div>
-    <h2>五官适配与浓度</h2>
-    <p class="lead">迁移时按真人脸型微调腮红落点、眼尾长度和唇色饱和，避免角色妆直接盖成面具。</p>
-    <div class="stat">
-      <div><i>Face</i><b id="fFace">待采集</b></div>
-      <div><i>Eyes</i><b id="fEyes">待采集</b></div>
-      <div><i>Lips</i><b id="fLips">待采集</b></div>
-      <div><i>Plan</i><b id="fPlan">待解析</b></div>
-    </div>
-    <div class="models" id="modelRow">
-      <button class="model on" data-m="ivory" type="button">Ivory 底模</button>
-      <button class="model" data-m="beige" type="button">Beige 底模</button>
-      <button class="model" data-m="olive" type="button">Olive 底模</button>
-    </div>
-    <div class="row"><span>整体迁移强度</span><b id="vAll">72%</b></div>
-    <input class="slider" id="all" type="range" min="20" max="100" value="72">
-    <div class="row"><span>眼妆</span><b id="vEye">80%</b></div>
-    <input class="slider" id="eye" type="range" min="0" max="100" value="80">
-    <div class="row"><span>唇妆</span><b id="vLip">78%</b></div>
-    <input class="slider" id="lip" type="range" min="0" max="100" value="78">
-    <div class="row"><span>颊彩 / 高光</span><b id="vCheek">64%</b></div>
-    <input class="slider" id="cheek" type="range" min="0" max="100" value="64">
-    <div class="row"><span>边缘柔化</span><b id="vSoft">70%</b></div>
-    <input class="slider" id="soft" type="range" min="20" max="100" value="70">
-    <div class="kicker caps">Wig Cutout</div>
-    <div class="row"><span>贴图浓度</span><b id="vDen">88%</b></div>
-    <input class="slider" id="wigDen" type="range" min="20" max="100" value="88">
-    <div class="row"><span>覆盖缩放</span><b id="vLen">100%</b></div>
-    <input class="slider" id="wigLen" type="range" min="20" max="400" value="100">
-    <div class="row"><span>刘海保留</span><b id="vBang">45%</b></div>
-    <input class="slider" id="wigBang" type="range" min="0" max="100" value="45">
-    <div class="row"><span>左右宽度</span><b id="vVol">100%</b></div>
-    <input class="slider" id="wigVol" type="range" min="30" max="300" value="100">
-    <p class="note">假发来自角色图抠图，直接贴到人脸上。浓度、缩放、刘海挖空和左右宽度可调。</p>
-    <div class="row"><span>显示假发贴图</span></div>
-    <button class="toggle on" id="wigToggle" type="button"></button>
-    <button class="btn" id="wigReset" type="button" style="margin-top:8px">复位假发位置</button>
-    <p class="note">自动贴合后若仍错位，直接在中间画面上按住拖动假发。缩放仍用上面的滑杆。</p>
-    <p class="note">眼妆与唇妆会提饱和，再按柔化半径做高斯边缘，所以颜色够明显，边缘不会像贴纸。面部数据仅在本地计算。</p>
-  </aside>
-</main>
-<script src="hair2d.js"></script>
-<script>
-
-
-
-﻿const view = document.getElementById("view");
+const view = document.getElementById("view");
 const src = document.getElementById("src");
 const mk = document.getElementById("mk");
 const vctx = view.getContext("2d", { willReadFrequently: true });
@@ -1011,7 +820,7 @@ document.getElementById("charInput").onchange=e=>{ const f=e.target.files&&e.tar
     const img=new Image();
     img.onload=()=>loadCharacter(img, "参考图"+(i+1));
     img.onerror=()=>setStatus("未找到项目参考图，请手动上传");
-    img.src = i===0 ? "动漫参考图1.jpg" : "动漫参考图2.jpg";
+    img.src = i===0 ? "ref-1.jpg" : "ref-2.jpg";
   };
 });
 const drop=document.getElementById("charDrop");
@@ -1167,9 +976,49 @@ ensureMesh();
 renderLayers();
 renderAll();
 
-
-
-
-</script>
-</body>
-</html>
+(function initMotionPolish(){
+  const revealTargets = document.querySelectorAll(".hero-inner, .sec-title, .sec-lead, .poster, .wrap > .card, .foot-inner");
+  revealTargets.forEach((el) => el.classList.add("reveal"));
+  document.querySelectorAll(".grid3").forEach((grid) => {
+    [...grid.children].forEach((child, i) => {
+      if (child.classList.contains("poster")) child.style.transitionDelay = (i * 80) + "ms";
+    });
+  });
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        const delay = Number.parseFloat(entry.target.style.transitionDelay) || 0;
+        window.setTimeout(() => { entry.target.style.transitionDelay = "0ms"; }, 560 + delay);
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    revealTargets.forEach((el) => observer.observe(el));
+  } else {
+    revealTargets.forEach((el) => el.classList.add("is-visible"));
+  }
+  document.querySelectorAll(".poster, .card").forEach((card) => {
+    card.addEventListener("pointermove", (event) => {
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty("--mx", (event.clientX - rect.left) + "px");
+      card.style.setProperty("--my", (event.clientY - rect.top) + "px");
+    });
+  });
+  const topbar = document.querySelector(".top");
+  const navLinks = [...document.querySelectorAll(".nav a[href^=\"#\"]")];
+  const navSections = navLinks.map((link) => ({
+    link,
+    section: document.querySelector(link.getAttribute("href"))
+  })).filter((item) => item.section);
+  const updateScrollState = () => {
+    if (topbar) topbar.classList.toggle("is-scrolled", window.scrollY > 12);
+    const active = navSections.find((item) => {
+      const rect = item.section.getBoundingClientRect();
+      return rect.top <= 120 && rect.bottom > 120;
+    });
+    navLinks.forEach((link) => link.classList.toggle("is-active", !!(active && active.link === link)));
+  };
+  window.addEventListener("scroll", updateScrollState, { passive: true });
+  updateScrollState();
+})();
